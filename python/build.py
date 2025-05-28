@@ -179,8 +179,6 @@ main_table.setStyle(TableStyle([
     ('LEFTPADDING', (0, 0), (-1, -1), 10),
     ('RIGHTPADDING', (0, 0), (-1, -1), 10),
 ]))
-elements.append(img_table)
-elements.append(Spacer(1, 15))
 
 # Add the main two-column layout
 elements.append(main_table)
