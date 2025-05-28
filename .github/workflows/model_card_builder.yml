@@ -48,7 +48,7 @@ jobs:
 
       - name: Generate summary using GitHub Models
         run: |
-          gh models run summarize --input-file model_card.txt --output-file summary.txt
+          gh models run summarize < model_card.txt > summary.txt
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
