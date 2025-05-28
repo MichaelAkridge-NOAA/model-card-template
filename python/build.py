@@ -27,7 +27,7 @@ LIGHT_GRAY = HexColor("#f5f5f5")
 # Setup styles
 styles = getSampleStyleSheet()
 
-# Create custom styles
+# Create new styles
 styles.add(ParagraphStyle(
     name='ModelCardTitle',
     parent=styles['Title'],
@@ -47,8 +47,10 @@ styles.add(ParagraphStyle(
     alignment=TA_CENTER,
     spaceAfter=20
 ))
+
 styles.add(ParagraphStyle(
-    name='SectionHeader',
+    name='ModelCardSection',
+    parent=styles['Heading2'],
     fontSize=12,
     leading=14,
     textColor=PRIMARY_COLOR,
@@ -56,14 +58,16 @@ styles.add(ParagraphStyle(
     spaceAfter=5,
     bold=True
 ))
+
+# Modify existing styles instead of adding new ones
+styles['BodyText'].fontSize = 10
+styles['BodyText'].leading = 14
+styles['BodyText'].textColor = TEXT_COLOR
+
+# Create custom footer style
 styles.add(ParagraphStyle(
-    name='BodyText',
-    fontSize=10,
-    leading=14,
-    textColor=TEXT_COLOR
-))
-styles.add(ParagraphStyle(
-    name='Footer',
+    name='ModelCardFooter',
+    parent=styles['BodyText'],
     fontSize=8,
     leading=10,
     textColor=TEXT_COLOR,
@@ -108,18 +112,18 @@ elements.append(Paragraph(f"{data['model_name']}", styles['ModelCardTitle']))
 elements.append(Paragraph(f"Version {data['model_details']['version']} | {data['model_details']['release_date']}", styles['ModelCardSubtitle']))
 
 # Plain language summary
-elements.append(Paragraph("What This Model Does", styles['SectionHeader']))
+elements.append(Paragraph("What This Model Does", styles['ModelCardSection']))
 for point in data['plain_language_summary']:
     elements.append(Paragraph(f"• {point}", styles['BodyText']))
 elements.append(Spacer(1, 10))
 
 # Key metrics
-elements.append(Paragraph("Model Performance", styles['SectionHeader']))
+elements.append(Paragraph("Model Performance", styles['ModelCardSection']))
 elements.append(create_metric_table(data['key_numbers']))
 elements.append(Spacer(1, 15))
 
 # Model details in a cleaner format
-elements.append(Paragraph("Technical Details", styles['SectionHeader']))
+elements.append(Paragraph("Technical Details", styles['ModelCardSection']))
 details_text = f"""
 • <b>Architecture:</b> {data['model_details']['architecture']}
 • <b>Input Size:</b> {data['model_details']['input_size']}
@@ -129,7 +133,7 @@ elements.append(Paragraph(details_text, styles['BodyText']))
 elements.append(Spacer(1, 15))
 
 # Confidence thresholds
-elements.append(Paragraph("Confidence Threshold Guide", styles['SectionHeader']))
+elements.append(Paragraph("Confidence Threshold Guide", styles['ModelCardSection']))
 for threshold in data['confidence_thresholds']:
     elements.append(Paragraph(
         f"• <b>{threshold['threshold']}</b> - {threshold['description']}",
@@ -159,7 +163,7 @@ footer_text = f"""
 {data['footer_info']['organization']} | Contact: {data['footer_info']['contact_email']} | Version {data['footer_info']['version']} | {data['footer_info']['year']}
 """
 elements.append(Spacer(1, 20))
-elements.append(Paragraph(footer_text, styles['Footer']))
+elements.append(Paragraph(footer_text, styles['ModelCardFooter']))
 
 # Build the PDF
 doc.build(elements)
