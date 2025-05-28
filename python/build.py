@@ -91,8 +91,6 @@ def create_metric_table(metrics):
     return t
 
 # Build PDF content with a frame for the header
-from reportlab.platypus import Frame, PageTemplate
-
 def header_footer(canvas, doc):
     # Draw the logo in top left
     canvas.saveState()
@@ -103,10 +101,10 @@ def header_footer(canvas, doc):
 doc = SimpleDocTemplate(
     pdf_path,
     pagesize=letter,
-    topMargin=1.2*inch,  # Increased top margin for logo
-    bottomMargin=0.75*inch,
-    leftMargin=0.75*inch,
-    rightMargin=0.75*inch
+    topMargin=1.0*inch,
+    bottomMargin=0.5*inch,
+    leftMargin=0.5*inch,
+    rightMargin=0.5*inch
 )
 
 # Add header to page template
@@ -125,64 +123,92 @@ doc.addPageTemplates([template])
 
 elements = []
 
-# Title and version (logo is handled in header)
+# Header section with title and version
 elements.append(Paragraph(f"{data['model_name']}", styles['ModelCardTitle']))
 elements.append(Paragraph(f"Version {data['model_details']['version']} | {data['model_details']['release_date']}", styles['ModelCardSubtitle']))
 
-# Two-column layout for content
-left_column = []
-right_column = []
+# Create main sections
+sections = []
 
-# Left column content
-left_column.append(Paragraph("What This Model Does", styles['ModelCardSection']))
-for point in data['plain_language_summary']:
-    left_column.append(Paragraph(f"• {point}", styles['BodyText']))
-left_column.append(Spacer(1, 10))
+# 1. Summary section (with example detection)
+summary_items = []
+summary_items.append(Paragraph("📋 Model Summary", styles['ModelCardSection']))
+# Combine all summary points into a single paragraph
+summary_text = " ".join([point.replace("**", "") for point in data['plain_language_summary']])
+summary_items.append(Paragraph(summary_text, styles['BodyText']))
+summary_items.append(Spacer(1, 10))
 
-left_column.append(Paragraph("Model Performance", styles['ModelCardSection']))
-left_column.append(create_metric_table(data['key_numbers']))
-left_column.append(Spacer(1, 10))
+# Add example detection with caption
+img_data = [[
+    Image(detection_img_path, width=4*inch, height=2.5*inch)
+]]
+img_table = Table(img_data)
+img_table.setStyle(TableStyle([
+    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+]))
+summary_items.append(img_table)
+summary_items.append(Paragraph("Example detection on underwater footage", styles['BodyText']))
+sections.append(summary_items)
 
-# Right column content
-# Example detection image at top of right column
-right_column.append(Image(detection_img_path, width=3.5*inch, height=3.5*inch))
-right_column.append(Spacer(1, 10))
+# 2. Performance metrics section
+metrics_items = []
+metrics_items.append(Paragraph("📊 Model Performance", styles['ModelCardSection']))
+metrics_items.append(create_metric_table(data['key_numbers']))
+metrics_items.append(Spacer(1, 10))
 
-right_column.append(Paragraph("Technical Details", styles['ModelCardSection']))
+# Add PR curve
+img_data = [[
+    Image(pr_curve_img_path, width=3*inch, height=2*inch)
+]]
+pr_table = Table(img_data)
+pr_table.setStyle(TableStyle([
+    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+]))
+metrics_items.append(pr_table)
+sections.append(metrics_items)
+
+# 3. Usage and implementation section
+usage_items = []
+usage_items.append(Paragraph("⚙️ Usage Guide", styles['ModelCardSection']))
+usage_items.append(Paragraph("<b>Technical Details</b>", styles['BodyText']))
 details_text = f"""
-• <b>Architecture:</b> {data['model_details']['architecture']}
-• <b>Input Size:</b> {data['model_details']['input_size']}
-• <b>Training Data:</b> {data['model_details']['training_data']}
+• Architecture: {data['model_details']['architecture']}
+• Input Size: {data['model_details']['input_size']}
+• Training Data: {data['model_details']['training_data']}
 """
-right_column.append(Paragraph(details_text, styles['BodyText']))
-right_column.append(Spacer(1, 10))
+usage_items.append(Paragraph(details_text, styles['BodyText']))
+usage_items.append(Spacer(1, 5))
 
-# Confidence thresholds with more detail
-right_column.append(Paragraph("Confidence Threshold Guide", styles['ModelCardSection']))
-threshold_text = """
-Adjust the confidence threshold to balance between catching all fish and avoiding false detections:
-"""
-right_column.append(Paragraph(threshold_text, styles['BodyText']))
+usage_items.append(Paragraph("<b>Confidence Threshold Settings</b>", styles['BodyText']))
 for threshold in data['confidence_thresholds']:
-    desc = threshold['description'].replace('<i>', '').replace('</i>', '')  # Clean up italics
-    right_column.append(Paragraph(
-        f"• <b>{threshold['threshold']}</b>: {desc}",
-        styles['BodyText']
-    ))
+    desc = threshold['description'].replace('<i>', '').replace('</i>', '')
+    usage_items.append(Paragraph(f"• {threshold['threshold']}: {desc}", styles['BodyText']))
+sections.append(usage_items)
 
-# Create two-column layout
-table_data = [[left_column, right_column]]
-main_table = Table(table_data, colWidths=[3.5*inch, 3.5*inch], rowHeights=[7*inch])
-main_table.setStyle(TableStyle([
+# Create sections table
+section_data = []
+for i in range(0, len(sections), 2):
+    row = []
+    row.append(sections[i])
+    if i + 1 < len(sections):
+        row.append(sections[i + 1])
+    else:
+        row.append([])  # Empty cell if odd number of sections
+    section_data.append(row)
+
+main_table = Table(section_data, colWidths=[3.7*inch, 3.7*inch])
+maihttps://huggingface.co/akridge/yolo11-fish-detector-grayscalen_table.setStyle(TableStyle([
     ('VALIGN', (0, 0), (-1, -1), 'TOP'),
     ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
     ('LEFTPADDING', (0, 0), (-1, -1), 10),
     ('RIGHTPADDING', (0, 0), (-1, -1), 10),
 ]))
 
-# Add the main two-column layout
+# Add the sections layout
 elements.append(main_table)
-elements.append(Spacer(1, 15))
+elements.append(Spacer(1, 10))
 
 # Quote and disclaimer at bottom
 elements.append(Paragraph(data['quote'], styles['ModelCardSubtitle']))
