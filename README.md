@@ -1,11 +1,11 @@
-# NOAA Model Card Template (in-development)
+# NOAA Model Card Template (Under Active development)
+# Coming Soon - In Progress
+A modern, clean template for creating model cards using Quarto & Python. This template provides a standardized way to document machine learning models following NOAA guidelines.
 
-A modern, clean template for creating model cards using Quarto. This template provides a standardized way to document machine learning models following NOAA guidelines.
+![Example Model Card](./assets/model_card_template_example.png)
 
-![Example Model Card]()
-test
+# Coming Soon
 ## Features
-
 - 📊 Clean, modern single-page layout
 - 🎨 NOAA/NMFS branded design with official colors
 - 📱 Responsive column layout
