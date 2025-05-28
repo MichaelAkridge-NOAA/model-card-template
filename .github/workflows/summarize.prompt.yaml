@@ -1,9 +1,0 @@
-messages:
-  - role: system
-    content: >-
-      You are an expert in summarizing Hugging Face model cards. Your job is to distill the key details about the model's architecture, training data, intended use, limitations, and evaluation results.
-  - role: user
-    content: 'Please summarize the following Hugging Face model card content: {{input}}'
-model: gpt-4o
-modelParameters:
-  max_tokens: 4096

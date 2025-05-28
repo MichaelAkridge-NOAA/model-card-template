@@ -1,0 +1,95 @@
+name: Model Card Builder
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+  workflow_dispatch:
+    inputs:
+      model_url:
+        description: 'Hugging Face model URL'
+        required: true
+        type: string
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  build_model_card:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.body, 'huggingface.co/') || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create assets directory
+        run: mkdir -p assets
+
+      - name: Extract Hugging Face URL
+        id: extract-url
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            URL="${{ github.event.inputs.model_url }}"
+          else
+            URL=$(echo "${{ github.event.issue.body }}" | grep -o 'https://huggingface.co/[^ ]*' | head -n1)
+          fi
+          REPO_ID=$(echo "$URL" | sed 's|https://huggingface.co/||')
+          echo "repo_id=$REPO_ID" >> $GITHUB_OUTPUT
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Fetch model card data
+        run: |
+          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.url }}"
+          if [ ! -f "model_data.json" ]; then
+            echo "Error: Failed to generate model_data.json"
+            exit 1
+          fi
+
+      - name: Generate PDF summary
+        run: |
+          python build.py --url "${{ steps.extract-url.outputs.url }}"
+          if [ ! -f "Model_Card.pdf" ]; then
+            echo "Error: Failed to generate Model_Card.pdf"
+            exit 1
+          fi
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-card-pdf
+          path: Model_Card.pdf
+
+      - name: Comment on issue
+        if: github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          MODEL_NAME="${{ steps.extract-url.outputs.repo_id }}"
+          
+          gh issue comment ${{ github.event.issue.number }} --body "### 📄 Model Card Generated
+          
+          A PDF summary has been generated for model: \`$MODEL_NAME\`
+          
+          To view the PDF:
+          1. Click on the latest workflow run in the Actions tab
+          2. Scroll to the Artifacts section
+          3. Download the \`model-card-pdf\` artifact
+          
+          Generated using [NOAA Model Card Template](https://github.com/noaa-fisheries/model-card-template)
+          
+          ---
+          *Note: You can view all PDF artifacts in the [Actions tab](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})*"
