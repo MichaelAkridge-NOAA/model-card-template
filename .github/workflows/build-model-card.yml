@@ -1,7 +1,8 @@
-name: Build Model Card
+name: Build Model Card via Python
 
 on:
-  workflow_dispatch:  # Allow manual trigger
+  push:
+    branches: [ main ]
 
 jobs:
   build:
