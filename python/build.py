@@ -27,26 +27,26 @@ LIGHT_GRAY = HexColor("#f5f5f5")
 # Setup styles
 styles = getSampleStyleSheet()
 
-# Override existing styles and add new ones
-styles['Title'] = ParagraphStyle(
-    'Title',
+# Create custom styles
+styles.add(ParagraphStyle(
+    name='ModelCardTitle',
     parent=styles['Title'],
     fontSize=24,
     leading=28,
     textColor=PRIMARY_COLOR,
     alignment=TA_CENTER,
     spaceAfter=20
-)
+))
 
-styles['Subtitle'] = ParagraphStyle(
-    'Subtitle',
+styles.add(ParagraphStyle(
+    name='ModelCardSubtitle',
     parent=styles['Title'],
     fontSize=14,
     leading=18,
     textColor=TEXT_COLOR,
     alignment=TA_CENTER,
     spaceAfter=20
-)
+))
 styles.add(ParagraphStyle(
     name='SectionHeader',
     fontSize=12,
@@ -104,8 +104,8 @@ elements.append(logo)
 elements.append(Spacer(1, 20))
 
 # Title and version
-elements.append(Paragraph(f"{data['model_name']}", styles['Title']))
-elements.append(Paragraph(f"Version {data['model_details']['version']} | {data['model_details']['release_date']}", styles['Subtitle']))
+elements.append(Paragraph(f"{data['model_name']}", styles['ModelCardTitle']))
+elements.append(Paragraph(f"Version {data['model_details']['version']} | {data['model_details']['release_date']}", styles['ModelCardSubtitle']))
 
 # Plain language summary
 elements.append(Paragraph("What This Model Does", styles['SectionHeader']))
@@ -151,7 +151,7 @@ elements.append(img_table)
 elements.append(Spacer(1, 15))
 
 # Quote and disclaimer
-elements.append(Paragraph(data['quote'], styles['Subtitle']))
+elements.append(Paragraph(data['quote'], styles['ModelCardSubtitle']))
 elements.append(Paragraph(data['disclaimer'], styles['BodyText']))
 
 # Footer
