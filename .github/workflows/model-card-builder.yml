@@ -1,16 +1,16 @@
 name: Model Card Builder
 
-on:
-  issues:
-    types:
-      - opened
-      - edited
-  workflow_dispatch:
-    inputs:
-      model_url:
-        description: 'Hugging Face model URL'
-        required: true
-        type: string
+#on:
+#  issues:
+#    types:
+#      - opened
+#      - edited
+#  workflow_dispatch:
+#    inputs:
+#      model_url:
+#        description: 'Hugging Face model URL'
+#        required: true
+#        type: string
 
 permissions:
   issues: write
