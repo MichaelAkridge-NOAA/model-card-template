@@ -1,0 +1,190 @@
+defaults:
+  organization: "NOAA"
+  disclaimer: "This is a scientific product and is not official communication of the National Oceanic and Atmospheric Administration, or the United States Department of Commerce."
+  logo_path: "assets/NOAA_FISHERIES_logoH_web.png"
+
+sources:
+  huggingface:
+    patterns:
+      yaml_metadata: true  # Look for YAML frontmatter
+      section_marker: "#"  # Markdown headers
+      metrics_format: "yaml"  # Look for metrics in YAML and in text
+  
+  local_markdown:
+    patterns:
+      yaml_metadata: true
+      section_marker: "#"
+      metrics_format: "text"
+  
+  docstring:
+    patterns:
+      yaml_metadata: false
+      section_marker: "---"  # Google-style docstring sections
+      metrics_format: "text"
+
+sections_to_extract:
+  model_overview:
+    title: "Model Details"
+    patterns:
+      - "## Model Details"
+      - "# Overview"
+      - "## Overview"
+    required: true
+    
+  metrics:
+    title: "Performance Metrics"
+    patterns:
+      - "## Metrics"
+      - "## Performance"
+      - "## Evaluation"
+    required: true
+    metrics_to_find:
+      - name: "precision"
+        patterns:
+          - "precision:\\s*(\\d+\\.\\d+)"
+          - "Precision[:\\s]+(\\d+\\.\\d+)"
+        description: "Model precision"
+      - name: "recall"
+        patterns:
+          - "recall:\\s*(\\d+\\.\\d+)"
+          - "Recall[:\\s]+(\\d+\\.\\d+)"
+        description: "Model recall"
+      - name: "mAP"
+        patterns:
+          - "mAP[@\\s]*0\\.5[:\\s]+(\\d+\\.\\d+)"
+          - "MAP[:\\s]+(\\d+\\.\\d+)"
+        description: "Mean Average Precision"
+    
+  usage:
+    title: "Usage Guide"
+    patterns:
+      - "## Usage"
+      - "## How to Use"
+      - "## Implementation"
+    required: false
+    
+  limitations:
+    title: "Limitations"
+    patterns:
+      - "## Limitations"
+      - "### Limitations"
+      - "## Known Issues"
+    required: false
+      
+  metrics_to_extract:
+    - name: "precision"
+      pattern: "precision:\\s*(\\d+\\.\\d+)"
+      description: "Share of detections that are real fish"
+    - name: "recall"
+      pattern: "recall:\\s*(\\d+\\.\\d+)"
+      description: "Share of all fish that are found"
+    - name: "mAP50"
+      pattern: "mAP50:\\s*(\\d+\\.\\d+)"
+      description: "Mean Average Precision at 0.5 IOU"
+    - name: "mAP50-95"
+      pattern: "mAP50-95:\\s*(\\d+\\.\\d+)"
+      description: "Mean Average Precision across IOU thresholds"
+metadata:
+  required:
+    - name: "license"
+      description: "Model license"
+    - name: "task_type"
+      description: "Type of ML task"
+  optional:
+    - name: "language"
+    - name: "base_model"
+    - name: "tags"
+    - name: "datasets"
+    - name: "pipeline_tag"
+
+summary_layout:
+  default_template:
+    - section: "📋 Overview"
+      content: 
+        - source: "model_overview"
+        - source: "metadata"
+          fields: ["task_type", "base_model"]
+      
+    - section: "📊 Performance"
+      content:
+        - source: "metrics"
+          style: "table"
+        - source: "images"
+          filter: ["pr_curve", "confusion_matrix"]
+      
+    - section: "⚙️ Usage"
+      content:
+        - source: "usage"
+        - source: "metadata"
+          fields: ["datasets", "license"]
+      
+    - section: "⚠️ Caution"
+      content:
+        - source: "limitations"
+        - source: "disclaimer"
+  
+  minimal_template:
+    - section: "📋 Quick Summary"
+      content:
+        - source: "model_overview"
+        - source: "metrics"
+          style: "compact"
+images:
+  types:
+    example:
+      title: "Example Output"
+      patterns:
+        - "test.gif"
+        - "example.png"
+        - "demo.jpg"
+        - "*_test.*"
+      max_to_include: 1
+      
+    pr_curve:
+      title: "Precision-Recall Curve"
+      patterns:
+        - "**/PR_curve.png"
+        - "**/precision_recall.png"
+      required: false
+      
+    confusion_matrix:
+      title: "Confusion Matrix"
+      patterns:
+        - "**/confusion_matrix.png"
+        - "**/confusion.png"
+      required: false
+      
+    training_plot:
+      title: "Training Progress"
+      patterns:
+        - "**/results.png"
+        - "**/training.png"
+        - "**/loss.png"
+      required: false
+
+styling:
+  themes:
+    default:
+      colors:
+        primary: "#005CB9"
+        text: "#1a1a1a"
+        background: "#f5f5f5"
+        accent: "#0077CC"
+      fonts:
+        title_size: 24
+        subtitle_size: 14
+        section_size: 12
+        body_size: 10
+        footer_size: 8
+        
+    minimal:
+      colors:
+        primary: "#000000"
+        text: "#333333"
+        background: "#FFFFFF"
+      fonts:
+        title_size: 20
+        subtitle_size: 12
+        section_size: 11
+        body_size: 10
+        footer_size: 8
