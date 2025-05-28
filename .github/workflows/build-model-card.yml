@@ -1,18 +1,6 @@
 name: Build Model Card
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'model_card_data.json'
-      - 'python/build.py'
-      - 'assets/**'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'model_card_data.json'
-      - 'python/build.py'
-      - 'assets/**'
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
