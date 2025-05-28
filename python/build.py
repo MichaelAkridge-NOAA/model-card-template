@@ -1,5 +1,5 @@
 import json
-from reportlab.platypus import SimpleDocTemplate, Image, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Image, Paragraph, Spacer, Table, TableStyle, Frame, PageTemplate
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
@@ -90,71 +90,103 @@ def create_metric_table(metrics):
     ]))
     return t
 
-# Build PDF content
+# Build PDF content with a frame for the header
+from reportlab.platypus import Frame, PageTemplate
+
+def header_footer(canvas, doc):
+    # Draw the logo in top left
+    canvas.saveState()
+    logo = Image(logo_path, width=1.8*inch, height=0.65*inch)
+    logo.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - 0.65*inch)
+    canvas.restoreState()
+
 doc = SimpleDocTemplate(
     pdf_path,
     pagesize=letter,
-    topMargin=0.75*inch,
+    topMargin=1.2*inch,  # Increased top margin for logo
     bottomMargin=0.75*inch,
     leftMargin=0.75*inch,
     rightMargin=0.75*inch
 )
 
+# Add header to page template
+template = PageTemplate(
+    'normal',
+    frames=[Frame(
+        doc.leftMargin, 
+        doc.bottomMargin, 
+        doc.width, 
+        doc.height,
+        id='normal'
+    )],
+    onPage=header_footer
+)
+doc.addPageTemplates([template])
+
 elements = []
 
-# Header with logo
-logo = Image(logo_path, width=2.5*inch, height=0.9*inch)
-elements.append(logo)
-elements.append(Spacer(1, 20))
-
-# Title and version
+# Title and version (logo is handled in header)
 elements.append(Paragraph(f"{data['model_name']}", styles['ModelCardTitle']))
 elements.append(Paragraph(f"Version {data['model_details']['version']} | {data['model_details']['release_date']}", styles['ModelCardSubtitle']))
 
-# Plain language summary
-elements.append(Paragraph("What This Model Does", styles['ModelCardSection']))
+# Two-column layout for content
+left_column = []
+right_column = []
+
+# Left column content
+left_column.append(Paragraph("What This Model Does", styles['ModelCardSection']))
 for point in data['plain_language_summary']:
-    elements.append(Paragraph(f"• {point}", styles['BodyText']))
-elements.append(Spacer(1, 10))
+    left_column.append(Paragraph(f"• {point}", styles['BodyText']))
+left_column.append(Spacer(1, 10))
 
-# Key metrics
-elements.append(Paragraph("Model Performance", styles['ModelCardSection']))
-elements.append(create_metric_table(data['key_numbers']))
-elements.append(Spacer(1, 15))
+left_column.append(Paragraph("Model Performance", styles['ModelCardSection']))
+left_column.append(create_metric_table(data['key_numbers']))
+left_column.append(Spacer(1, 10))
 
-# Model details in a cleaner format
-elements.append(Paragraph("Technical Details", styles['ModelCardSection']))
+# Right column content
+# Example detection image at top of right column
+right_column.append(Image(detection_img_path, width=3.5*inch, height=3.5*inch))
+right_column.append(Spacer(1, 10))
+
+right_column.append(Paragraph("Technical Details", styles['ModelCardSection']))
 details_text = f"""
 • <b>Architecture:</b> {data['model_details']['architecture']}
 • <b>Input Size:</b> {data['model_details']['input_size']}
 • <b>Training Data:</b> {data['model_details']['training_data']}
 """
-elements.append(Paragraph(details_text, styles['BodyText']))
-elements.append(Spacer(1, 15))
+right_column.append(Paragraph(details_text, styles['BodyText']))
+right_column.append(Spacer(1, 10))
 
-# Confidence thresholds
-elements.append(Paragraph("Confidence Threshold Guide", styles['ModelCardSection']))
+# Confidence thresholds with more detail
+right_column.append(Paragraph("Confidence Threshold Guide", styles['ModelCardSection']))
+threshold_text = """
+Adjust the confidence threshold to balance between catching all fish and avoiding false detections:
+"""
+right_column.append(Paragraph(threshold_text, styles['BodyText']))
 for threshold in data['confidence_thresholds']:
-    elements.append(Paragraph(
-        f"• <b>{threshold['threshold']}</b> - {threshold['description']}",
+    desc = threshold['description'].replace('<i>', '').replace('</i>', '')  # Clean up italics
+    right_column.append(Paragraph(
+        f"• <b>{threshold['threshold']}</b>: {desc}",
         styles['BodyText']
     ))
-elements.append(Spacer(1, 15))
 
-# Images side by side using a table
-img_table_data = [[
-    Image(detection_img_path, width=3*inch, height=3*inch),
-    Image(pr_curve_img_path, width=3*inch, height=3*inch)
-]]
-img_table = Table(img_table_data, colWidths=[3.5*inch, 3.5*inch])
-img_table.setStyle(TableStyle([
-    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+# Create two-column layout
+table_data = [[left_column, right_column]]
+main_table = Table(table_data, colWidths=[3.5*inch, 3.5*inch], rowHeights=[7*inch])
+main_table.setStyle(TableStyle([
+    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+    ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+    ('LEFTPADDING', (0, 0), (-1, -1), 10),
+    ('RIGHTPADDING', (0, 0), (-1, -1), 10),
 ]))
 elements.append(img_table)
 elements.append(Spacer(1, 15))
 
-# Quote and disclaimer
+# Add the main two-column layout
+elements.append(main_table)
+elements.append(Spacer(1, 15))
+
+# Quote and disclaimer at bottom
 elements.append(Paragraph(data['quote'], styles['ModelCardSubtitle']))
 elements.append(Paragraph(data['disclaimer'], styles['BodyText']))
 
@@ -162,7 +194,7 @@ elements.append(Paragraph(data['disclaimer'], styles['BodyText']))
 footer_text = f"""
 {data['footer_info']['organization']} | Contact: {data['footer_info']['contact_email']} | Version {data['footer_info']['version']} | {data['footer_info']['year']}
 """
-elements.append(Spacer(1, 20))
+elements.append(Spacer(1, 10))
 elements.append(Paragraph(footer_text, styles['ModelCardFooter']))
 
 # Build the PDF
