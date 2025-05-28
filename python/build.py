@@ -1,4 +1,5 @@
 import json
+import re
 from reportlab.platypus import SimpleDocTemplate, Image, Paragraph, Spacer, Table, TableStyle, Frame, PageTemplate
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import letter
@@ -10,8 +11,60 @@ import os
 # Load model card data
 script_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(script_dir)
-with open(os.path.join(root_dir, 'model_card_data.json')) as f:
-    data = json.load(f)
+
+from fetch_hf_model_card import fetch_huggingface_model_card
+
+# Fetch Hugging Face model card
+hf_data = fetch_huggingface_model_card("akridge/yolo11-fish-detector-grayscale")
+
+# Extract key information for the summary
+def extract_metrics_from_text(text):
+    metrics = []
+    # Look for common metrics patterns
+    patterns = {
+        'mAP': r'mAP[@\s]*0\.5[\s:]+([0-9.]+)',
+        'Precision': r'[Pp]recision[\s:]+([0-9.]+)',
+        'Recall': r'[Rr]ecall[\s:]+([0-9.]+)'
+    }
+    
+    for metric, pattern in patterns.items():
+        match = re.search(pattern, text)
+        if match:
+            metrics.append({
+                "metric": metric,
+                "value": f"<b>{match.group(1)}</b>",
+                "meaning": {
+                    'mAP': "Mean Average Precision at 0.5 IOU",
+                    'Precision': "Share of detections that are real fish",
+                    'Recall': "Share of all fish that are found"
+                }[metric]
+            })
+    return metrics
+
+# Create summary data structure
+data = {
+    "model_name": hf_data["model_info"]["model_name"],
+    "model_details": {
+        "version": "1.0.0",  # You might want to extract this from the model card
+        "release_date": "2025-05-23",  # This too
+        "architecture": "YOLOv11",
+        "input_size": "1920x1080 Grayscale",
+        "training_data": "Underwater camera footage"
+    },
+    "plain_language_summary": hf_data["sections"].get("Overview", "No overview available"),
+    "key_numbers": extract_metrics_from_text(str(hf_data["sections"])),
+    "confidence_thresholds": [
+        {"threshold": "0.20", "description": "Maximum recall, more false positives"},
+        {"threshold": "0.50", "description": "Balanced detection (default)"},
+        {"threshold": "0.80", "description": "High precision, fewer false positives"}
+    ],
+    "footer_info": {
+        "organization": "NOAA / CIMAR",
+        "contact_email": "michael.akridge@noaa.gov",
+        "version": "1.0",
+        "year": "2025"
+    }
+}
 
 # Set up paths
 logo_path = os.path.join(root_dir, 'assets', 'NOAA_FISHERIES_logoH_web.png')
