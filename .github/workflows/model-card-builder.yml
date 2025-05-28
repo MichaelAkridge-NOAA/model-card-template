@@ -47,31 +47,49 @@ jobs:
           else
             URL=$(echo "${{ github.event.issue.body }}" | grep -o 'https://huggingface.co/[^ ]*' | head -n1)
           fi
+          if [[ -z "$URL" ]]; then
+            echo "Error: No valid Hugging Face URL found"
+            exit 1
+          fi
           REPO_ID=$(echo "$URL" | sed 's|https://huggingface.co/||')
           echo "repo_id=$REPO_ID" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "Found model URL: $URL"
 
       - name: Fetch model card data
+        id: fetch-data
+        continue-on-error: true
         run: |
-          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.url }}"
+          echo "Fetching data from ${{ steps.extract-url.outputs.url }}"
+          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.url }}" 2>&1 | tee fetch.log
           if [ ! -f "model_data.json" ]; then
-            echo "Error: Failed to generate model_data.json"
+            echo "::error::Failed to generate model_data.json"
             exit 1
           fi
+          echo "Successfully generated model_data.json"
 
       - name: Generate PDF summary
+        id: generate-pdf
+        if: success() || steps.fetch-data.outcome == 'success'
         run: |
-          python build.py --url "${{ steps.extract-url.outputs.url }}"
+          echo "Generating PDF for ${{ steps.extract-url.outputs.repo_id }}"
+          python build.py --url "${{ steps.extract-url.outputs.url }}" 2>&1 | tee build.log
           if [ ! -f "Model_Card.pdf" ]; then
-            echo "Error: Failed to generate Model_Card.pdf"
+            echo "::error::Failed to generate Model_Card.pdf"
             exit 1
           fi
+          echo "Successfully generated Model_Card.pdf"
 
       - name: Upload PDF artifact
+        if: success() || steps.generate-pdf.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: model-card-pdf
-          path: Model_Card.pdf
+          path: |
+            Model_Card.pdf
+            model_data.json
+            fetch.log
+            build.log
 
       - name: Comment on issue
         if: github.event_name == 'issues'
@@ -79,17 +97,26 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           MODEL_NAME="${{ steps.extract-url.outputs.repo_id }}"
+          STATUS=""
+          if [[ "${{ steps.generate-pdf.outcome }}" == "success" ]]; then
+            STATUS="✅ Successfully generated"
+          else
+            STATUS="⚠️ Generated with some warnings"
+          fi
           
-          gh issue comment ${{ github.event.issue.number }} --body "### 📄 Model Card Generated
+          gh issue comment ${{ github.event.issue.number }} --body "### 📄 Model Card $STATUS
           
-          A PDF summary has been generated for model: \`$MODEL_NAME\`
+          Generated summary for model: \`$MODEL_NAME\`
           
-          To view the PDF:
-          1. Click on the latest workflow run in the Actions tab
+          To access the generated files:
+          1. Go to the [workflow run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})
           2. Scroll to the Artifacts section
-          3. Download the \`model-card-pdf\` artifact
+          3. Download \`model-card-pdf\` to get:
+             - The PDF summary
+             - Raw model data (JSON)
+             - Build logs
           
           Generated using [NOAA Model Card Template](https://github.com/noaa-fisheries/model-card-template)
           
           ---
-          *Note: You can view all PDF artifacts in the [Actions tab](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})*"
+          *If you notice any issues, please check the build logs in the artifacts*"
