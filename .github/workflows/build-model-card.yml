@@ -1,0 +1,44 @@
+name: Build Model Card
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'model_card_data.json'
+      - 'python/build.py'
+      - 'assets/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'model_card_data.json'
+      - 'python/build.py'
+      - 'assets/**'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install reportlab
+        
+    - name: Build Model Card
+      run: |
+        python python/build.py
+        
+    - name: Upload Model Card PDF
+      uses: actions/upload-artifact@v3
+      with:
+        name: model-card
+        path: Model_Card.pdf
+        if-no-files-found: error

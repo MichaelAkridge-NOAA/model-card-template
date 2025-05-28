@@ -1,14 +1,13 @@
-# .github/workflows/render-pdf.yml
-name: Render Model Card PDF
+name: Render Model Card PDF (Final Test)
 
-on:
-  push:
-    branches: [ main ]
-
+#on:
+#  push:
+#    branches: [ main ]
 
 jobs:
   render-pdf:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
 
@@ -20,15 +19,21 @@ jobs:
           version: '1.7.31'
           tinytex: true
 
-      - name: Install title-page extension
+      - name: Debug Available Fonts (Optional)
         run: |
-          quarto install extension nmfs-opensci/quarto_titlepages
+          fc-list : family | sort
+
+      - name: Clone Quarto Extension (titlepages)
+        run: |
+          git clone --depth=1 https://github.com/nmfs-opensci/quarto_titlepages.git
+          mkdir -p _extensions/titlepage
+          cp -r quarto_titlepages/_extensions/titlepage/* _extensions/titlepage/
 
       - name: Render PDF
         run: |
-          quarto render model_card_modern.qmd --to titlepage
+          quarto render model_card_modern.qmd --to titlepage-pdf
 
-      - name: Upload PDF artifact
+      - name: Upload PDF Artifact
         uses: actions/upload-artifact@v4
         with:
           name: model-card-pdf
