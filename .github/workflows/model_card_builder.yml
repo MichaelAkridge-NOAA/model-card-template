@@ -16,12 +16,12 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
+        uses: actions/checkout@v4      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'      - name: Install dependencies
+          python-version: '3.9'
+
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 pyyaml reportlab
@@ -54,8 +54,9 @@ jobs:
         run: |
           mkdir -p assets  # Ensure assets directory exists
           cd python
-          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.repo_id }}"
-          python build.py --output ../Model_Card.pdf      - name: Upload PDF artifact
+          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.repo_id }}"          python build.py --output ../Model_Card.pdf
+
+      - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: model-card-pdf
@@ -75,7 +76,5 @@ jobs:
           1. Go to Actions tab
           2. Click on this workflow run
           3. Scroll down to Artifacts
-          4. Download model-card-pdf"
-        env:
-          GH_TOKEN: ${{ github.token }}
+          4. Download model-card-pdf"        env:
           GH_TOKEN: ${{ github.token }}
