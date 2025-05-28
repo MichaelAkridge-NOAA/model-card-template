@@ -26,22 +26,27 @@ LIGHT_GRAY = HexColor("#f5f5f5")
 
 # Setup styles
 styles = getSampleStyleSheet()
-styles.add(ParagraphStyle(
-    name='Title',
+
+# Override existing styles and add new ones
+styles['Title'] = ParagraphStyle(
+    'Title',
+    parent=styles['Title'],
     fontSize=24,
     leading=28,
     textColor=PRIMARY_COLOR,
     alignment=TA_CENTER,
     spaceAfter=20
-))
-styles.add(ParagraphStyle(
-    name='Subtitle',
+)
+
+styles['Subtitle'] = ParagraphStyle(
+    'Subtitle',
+    parent=styles['Title'],
     fontSize=14,
     leading=18,
     textColor=TEXT_COLOR,
     alignment=TA_CENTER,
     spaceAfter=20
-))
+)
 styles.add(ParagraphStyle(
     name='SectionHeader',
     fontSize=12,
