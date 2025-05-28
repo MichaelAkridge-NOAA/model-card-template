@@ -1,5 +1,7 @@
 import json
 import re
+import sys
+import argparse
 from reportlab.platypus import SimpleDocTemplate, Image, Paragraph, Spacer, Table, TableStyle, Frame, PageTemplate
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.pagesizes import letter
@@ -12,10 +14,15 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(script_dir)
 
-from fetch_hf_model_card import fetch_huggingface_model_card
+# Load model data from JSON file
+model_data_path = os.path.join(script_dir, "model_data.json")
+if not os.path.exists(model_data_path):
+    print(f"Error: Model data file not found at {model_data_path}")
+    print("Please run fetch_hf_model_card.py first")
+    sys.exit(1)
 
-# Fetch Hugging Face model card
-hf_data = fetch_huggingface_model_card("akridge/yolo11-fish-detector-grayscale")
+with open(model_data_path, 'r') as f:
+    hf_data = json.load(f)
 
 # Extract key information for the summary
 def extract_metrics_from_text(text):
@@ -42,14 +49,15 @@ def extract_metrics_from_text(text):
     return metrics
 
 # Create summary data structure
+model_info = hf_data.get("model_info", {})
 data = {
-    "model_name": hf_data["model_info"]["model_name"],
+    "model_name": model_info.get("model_name", "Unnamed Model"),
     "model_details": {
-        "version": "1.0.0",  # You might want to extract this from the model card
-        "release_date": "2025-05-23",  # This too
-        "architecture": "YOLOv11",
-        "input_size": "1920x1080 Grayscale",
-        "training_data": "Underwater camera footage"
+        "version": model_info.get("version", "1.0.0"),
+        "release_date": model_info.get("release_date", "N/A"),
+        "architecture": model_info.get("architecture", "Not specified"),
+        "input_size": model_info.get("input_size", "Not specified"),
+        "training_data": model_info.get("training_data", "Not specified")
     },
     "plain_language_summary": hf_data["sections"].get("Overview", "No overview available"),
     "key_numbers": extract_metrics_from_text(str(hf_data["sections"])),
@@ -144,12 +152,21 @@ def create_metric_table(metrics):
     return t
 
 # Build PDF content with a frame for the header
+def safe_load_image(path, default_width, default_height):
+    """Load an image file with fallback for missing files"""
+    if os.path.exists(path):
+        return Image(path, width=default_width, height=default_height)
+    print(f"Warning: Image file not found: {path}")
+    # Return an empty spacer instead
+    return Spacer(default_width, default_height)
+
 def header_footer(canvas, doc):
     # Draw the logo in top left
-    canvas.saveState()
-    logo = Image(logo_path, width=1.8*inch, height=0.65*inch)
-    logo.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - 0.65*inch)
-    canvas.restoreState()
+    if os.path.exists(logo_path):
+        canvas.saveState()
+        logo = Image(logo_path, width=1.8*inch, height=0.65*inch)
+        logo.drawOn(canvas, doc.leftMargin, doc.height + doc.topMargin - 0.65*inch)
+        canvas.restoreState()
 
 doc = SimpleDocTemplate(
     pdf_path,
@@ -193,7 +210,7 @@ summary_items.append(Spacer(1, 10))
 
 # Add example detection with caption
 img_data = [[
-    Image(detection_img_path, width=4*inch, height=2.5*inch)
+    safe_load_image(detection_img_path, 4*inch, 2.5*inch)
 ]]
 img_table = Table(img_data)
 img_table.setStyle(TableStyle([
@@ -201,7 +218,8 @@ img_table.setStyle(TableStyle([
     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
 ]))
 summary_items.append(img_table)
-summary_items.append(Paragraph("Example detection on underwater footage", styles['BodyText']))
+if os.path.exists(detection_img_path):
+    summary_items.append(Paragraph("Example detection on underwater footage", styles['BodyText']))
 sections.append(summary_items)
 
 # 2. Performance metrics section
@@ -210,16 +228,17 @@ metrics_items.append(Paragraph("📊 Model Performance", styles['ModelCardSectio
 metrics_items.append(create_metric_table(data['key_numbers']))
 metrics_items.append(Spacer(1, 10))
 
-# Add PR curve
+# Add PR curve if available
 img_data = [[
-    Image(pr_curve_img_path, width=3*inch, height=2*inch)
+    safe_load_image(pr_curve_img_path, 3*inch, 2*inch)
 ]]
 pr_table = Table(img_data)
 pr_table.setStyle(TableStyle([
     ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
 ]))
-metrics_items.append(pr_table)
+if os.path.exists(pr_curve_img_path):
+    metrics_items.append(pr_table)
 sections.append(metrics_items)
 
 # 3. Usage and implementation section
@@ -252,7 +271,7 @@ for i in range(0, len(sections), 2):
     section_data.append(row)
 
 main_table = Table(section_data, colWidths=[3.7*inch, 3.7*inch])
-maihttps://huggingface.co/akridge/yolo11-fish-detector-grayscalen_table.setStyle(TableStyle([
+main_table.setStyle(TableStyle([
     ('VALIGN', (0, 0), (-1, -1), 'TOP'),
     ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
     ('LEFTPADDING', (0, 0), (-1, -1), 10),
@@ -264,8 +283,10 @@ elements.append(main_table)
 elements.append(Spacer(1, 10))
 
 # Quote and disclaimer at bottom
-elements.append(Paragraph(data['quote'], styles['ModelCardSubtitle']))
-elements.append(Paragraph(data['disclaimer'], styles['BodyText']))
+if 'quote' in data and data['quote']:
+    elements.append(Paragraph(data['quote'], styles['ModelCardSubtitle']))
+if 'disclaimer' in data and data['disclaimer']:
+    elements.append(Paragraph(data['disclaimer'], styles['BodyText']))
 
 # Footer
 footer_text = f"""
@@ -278,3 +299,13 @@ elements.append(Paragraph(footer_text, styles['ModelCardFooter']))
 doc.build(elements)
 
 print(f"Model card PDF created at: {pdf_path}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Build a model card PDF from JSON data')
+    parser.add_argument('--output', '-o', 
+                      default=os.path.join(root_dir, 'Model_Card.pdf'),
+                      help='Output path for the PDF file')
+    args = parser.parse_args()
+    
+    # Update pdf_path with command line argument
+    pdf_path = args.output

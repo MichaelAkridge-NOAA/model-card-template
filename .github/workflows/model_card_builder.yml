@@ -1,0 +1,80 @@
+name: Model Card Builder
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+  contents: read
+  models: read
+
+jobs:
+  build_model_card:
+    runs-on: ubuntu-latest
+    if: contains(github.event.issue.body, 'huggingface.co/')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 pyyaml reportlab      - name: Extract Hugging Face URL
+        id: extract-url
+        run: |
+          URL=$(echo "${{ github.event.issue.body }}" | grep -o 'https://huggingface.co/[^ ]*' | head -n1)
+          REPO_ID=$(echo $URL | sed 's|https://huggingface.co/||')
+          echo "repo_id=$REPO_ID" >> $GITHUB_OUTPUT
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Install gh-models extension
+        run: gh extension install https://github.com/github/gh-models
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Get model card content for summary
+        id: get-model-card
+        run: |
+          curl -s "${{ steps.extract-url.outputs.url }}" > model_card.txt
+
+      - name: Generate AI summary
+        run: |
+          cat model_card.txt | gh models run --file summarize_model.prompt.yaml > summary.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Fetch model card and build PDF
+        run: |
+          mkdir -p assets  # Ensure assets directory exists
+          cd python
+          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.repo_id }}"
+          python build.py --output ../Model_Card.pdf
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-card-pdf
+          path: Model_Card.pdf      - name: Comment on issue
+        run: |
+          SUMMARY=$(cat summary.txt)
+          gh issue comment ${{ github.event.issue.number }} --body "### AI-Generated Model Card Summary
+          ${SUMMARY}
+
+          ---
+
+          ✨ A detailed PDF version of the model card has been generated and uploaded as an artifact.
+
+          To download the PDF:
+          1. Go to Actions tab
+          2. Click on this workflow run
+          3. Scroll down to Artifacts
+          4. Download model-card-pdf"
+        env:
+          GH_TOKEN: ${{ github.token }}

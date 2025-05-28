@@ -121,5 +121,17 @@ def fetch_huggingface_model_card(repo_id: str, config_path: str) -> ModelCardCon
     )
 
 if __name__ == "__main__":
-    model_data = fetch_huggingface_model_card("akridge/yolo11-fish-detector-grayscale")
-    print(json.dumps(model_data, indent=2))
+    import sys
+    if len(sys.argv) != 2:
+        print("Usage: python fetch_hf_model_card.py <repo_id>")
+        sys.exit(1)
+    
+    repo_id = sys.argv[1]
+    model_data = fetch_huggingface_model_card(repo_id)
+    
+    # Save the data to a JSON file for build.py to use
+    output_path = os.path.join(os.path.dirname(__file__), "model_data.json")
+    with open(output_path, "w") as f:
+        json.dump(model_data, indent=2, fp=f)
+    
+    print(f"Model data saved to: {output_path}")
