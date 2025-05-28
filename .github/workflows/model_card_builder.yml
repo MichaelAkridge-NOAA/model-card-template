@@ -7,16 +7,17 @@ on:
 permissions:
   issues: write
   contents: read
-  models: read
 
 jobs:
   build_model_card:
     runs-on: ubuntu-latest
     if: contains(github.event.issue.body, 'huggingface.co/')
-    
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4      - name: Set up Python
+        uses: actions/checkout@v4
+
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
@@ -35,9 +36,10 @@ jobs:
           echo "url=$URL" >> $GITHUB_OUTPUT
 
       - name: Install gh-models extension
-        run: gh extension install https://github.com/github/gh-models
+        run: |
+          gh extension install https://github.com/github/gh-models || echo "Extension may already be installed"
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get model card content for summary
         id: get-model-card
@@ -46,15 +48,25 @@ jobs:
 
       - name: Generate AI summary
         run: |
-          cat model_card.txt | gh models run --file summarize_model.prompt.yaml > summary.txt
+          if [ -f summarize_model.prompt.yaml ]; then
+            cat model_card.txt | gh models run --file summarize_model.prompt.yaml > summary.txt
+          else
+            echo "summarize_model.prompt.yaml not found, skipping summary generation" > summary.txt
+          fi
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch model card and build PDF
+      - name: Prepare directories
         run: |
-          mkdir -p assets  # Ensure assets directory exists
-          cd python
-          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.repo_id }}"          python build.py --output ../Model_Card.pdf
+          mkdir -p assets
+
+      - name: Fetch Hugging Face model card
+        run: |
+          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.repo_id }}"
+
+      - name: Build PDF from model card
+        run: |
+          python build.py --output Model_Card.pdf
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
@@ -62,19 +74,22 @@ jobs:
           name: model-card-pdf
           path: Model_Card.pdf
 
-      - name: Comment on issue
+      - name: Comment on issue with summary and download instructions
         run: |
           SUMMARY=$(cat summary.txt)
-          gh issue comment ${{ github.event.issue.number }} --body "### AI-Generated Model Card Summary
+          gh issue comment ${{ github.event.issue.number }} --body "### 📄 AI-Generated Model Card Summary
+
           ${SUMMARY}
 
           ---
 
-          ✨ A detailed PDF version of the model card has been generated and uploaded as an artifact.
+          ✨ **A detailed PDF version of the model card has been generated and uploaded as an artifact.**
 
-          To download the PDF:
-          1. Go to Actions tab
-          2. Click on this workflow run
-          3. Scroll down to Artifacts
-          4. Download model-card-pdf"        env:
-          GH_TOKEN: ${{ github.token }}
+          📥 **To download the PDF**:
+          1. Go to the **Actions** tab
+          2. Click on the workflow run
+          3. Scroll down to **Artifacts**
+          4. Download **model-card-pdf**
+          "
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
