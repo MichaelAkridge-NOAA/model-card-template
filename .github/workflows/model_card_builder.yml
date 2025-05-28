@@ -2,7 +2,9 @@ name: Model Card Builder
 
 on:
   issues:
-    types: [opened, edited]
+    types:
+      - opened
+      - edited
 
 permissions:
   issues: write
@@ -31,7 +33,7 @@ jobs:
         id: extract-url
         run: |
           URL=$(echo "${{ github.event.issue.body }}" | grep -o 'https://huggingface.co/[^ ]*' | head -n1)
-          REPO_ID=$(echo $URL | sed 's|https://huggingface.co/||')
+          REPO_ID=$(echo "$URL" | sed 's|https://huggingface.co/||')
           echo "repo_id=$REPO_ID" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
 
@@ -48,7 +50,11 @@ jobs:
 
       - name: Generate summary using GitHub Models
         run: |
-          gh models run summarize < model_card.txt > summary.txt
+          if [ -f summarize.prompt.yaml ]; then
+            gh models run summarize < model_card.txt > summary.txt
+          else
+            echo "summarize.prompt.yaml not found. Skipping summary generation." > summary.txt
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -58,11 +64,19 @@ jobs:
 
       - name: Fetch detailed Hugging Face model card (optional)
         run: |
-          python fetch_hf_model_card.py "${{ steps.extract-url.outputs.repo_id }}"
+          if [ -f fetch_hf_model_card.py ]; then
+            python fetch_hf_model_card.py "${{ steps.extract-url.outputs.repo_id }}"
+          else
+            echo "fetch_hf_model_card.py not found. Skipping detailed fetch."
+          fi
 
       - name: Build PDF from model card
         run: |
-          python build.py --output Model_Card.pdf
+          if [ -f build.py ]; then
+            python build.py --output Model_Card.pdf
+          else
+            echo "build.py not found. Skipping PDF generation."
+          fi
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
