@@ -41,26 +41,22 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get model card content for summary
-        id: get-model-card
+      - name: Fetch Hugging Face model card content
+        id: fetch-model-card
         run: |
           curl -s "${{ steps.extract-url.outputs.url }}" > model_card.txt
 
-      - name: Generate AI summary
+      - name: Generate summary using GitHub Models
         run: |
-          if [ -f summarize_model.prompt.yaml ]; then
-            cat model_card.txt | gh models run --file summarize_model.prompt.yaml > summary.txt
-          else
-            echo "summarize_model.prompt.yaml not found, skipping summary generation" > summary.txt
-          fi
+          gh models run summarize --input-file model_card.txt --output-file summary.txt
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Prepare directories
+      - name: Prepare assets directory
         run: |
           mkdir -p assets
 
-      - name: Fetch Hugging Face model card
+      - name: Fetch detailed Hugging Face model card (optional)
         run: |
           python fetch_hf_model_card.py "${{ steps.extract-url.outputs.repo_id }}"
 
@@ -74,7 +70,7 @@ jobs:
           name: model-card-pdf
           path: Model_Card.pdf
 
-      - name: Comment on issue with summary and download instructions
+      - name: Comment on issue with summary
         run: |
           SUMMARY=$(cat summary.txt)
           gh issue comment ${{ github.event.issue.number }} --body "### 📄 AI-Generated Model Card Summary
