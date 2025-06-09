@@ -1,0 +1,16 @@
+body {
+  font-family: Arial, sans-serif;
+  color: #1a1a1a;
+  line-height: 1.4;
+}
+
+h1, h2, h3, h4 {
+  color: #005CB9;
+}
+
+footer {
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 2em;
+  color: #1a1a1a;
+}

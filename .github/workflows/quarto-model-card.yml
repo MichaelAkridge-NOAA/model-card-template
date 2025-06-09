@@ -1,0 +1,25 @@
+name: Quarto Model Card
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.qmd'
+      - '.github/workflows/quarto-model-card.yml'
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+      - name: Render model card
+        run: |
+          quarto render model_card_template.qmd --output-dir _output
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-card-html
+          path: _output/

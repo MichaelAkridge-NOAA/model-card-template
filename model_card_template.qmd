@@ -1,0 +1,27 @@
+---
+title: "{{< model_name >}}"
+format:
+  html:
+    toc: true
+    theme: cosmo
+    css: assets/model-card.css
+  pdf:
+    documentclass: article
+jupyter: python3
+---
+
+# Model Overview
+
+{{< overview >}}
+
+## Key Metrics
+
+{{< metrics >}}
+
+## Usage Guide
+
+{{< usage >}}
+
+<footer>
+Generated with the NOAA Model Card Template
+</footer>

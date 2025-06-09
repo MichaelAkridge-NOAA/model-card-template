@@ -9,7 +9,8 @@ A modern, clean template for creating model cards using Quarto & Python. This te
 - 📊 Clean, modern single-page layout
 - 🎨 NOAA/NMFS branded design with official colors
 - 📱 Responsive column layout
-- 🔄 Automated GitHub Actions workflow
+- 🎨 Quarto template with NOAA colors
+- 🔄 Automated GitHub Actions workflow for Quarto rendering
 - 📈 Support for data visualization
 - 🎯 Focus on key metrics and explanations
 
@@ -39,6 +40,10 @@ A modern, clean template for creating model cards using Quarto & Python. This te
    quarto render my_model_card.qmd --to pdf
    ```
    The output will be in the `_output` folder.
+
+4. **Automate with GitHub Actions:**
+   - A workflow in `.github/workflows/quarto-model-card.yml` renders the Quarto template whenever `.qmd` files change or the workflow is manually run.
+   - The rendered model card (HTML/PDF) is uploaded as a workflow artifact for easy download.
 
 ### Template Features
 - Clean, one-page layout
