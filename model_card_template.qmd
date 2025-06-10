@@ -1,5 +1,5 @@
 ---
-title: "{{< model_name >}}"
+title: "{{< param model_name >}}"
 format:
   html:
     toc: true
@@ -7,18 +7,25 @@ format:
     css: assets/model-card.css
   pdf:
     documentclass: article
+params:
+  model_name: "Model Name"
+  overview: "Add an overview of your model here."
+  metric_map: "0.0"
+  metric_precision: "0.0"
+  metric_recall: "0.0"
+  usage: "Describe how to use the model."
 ---
 
 # Model Overview
 
-{{< overview >}}
+{{< param overview >}}
 
 ## Key Metrics
 
 ::: {.metrics}
 ::: {.metric-box}
 :::{.metric-value}
-{{< metric_map >}}
+{{< param metric_map >}}
 :::
 :::{.metric-label}
 mAP50
@@ -27,7 +34,7 @@ mAP50
 
 ::: {.metric-box}
 :::{.metric-value}
-{{< metric_precision >}}
+{{< param metric_precision >}}
 :::
 :::{.metric-label}
 Precision
@@ -36,7 +43,7 @@ Precision
 
 ::: {.metric-box}
 :::{.metric-value}
-{{< metric_recall >}}
+{{< param metric_recall >}}
 :::
 :::{.metric-label}
 Recall
@@ -46,7 +53,7 @@ Recall
 
 ## Usage Guide
 
-{{< usage >}}
+{{< param usage >}}
 
 <footer>
 Generated with the NOAA Model Card Template

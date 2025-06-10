@@ -31,12 +31,12 @@ A modern, clean template for creating model cards using Quarto & Python. This te
 
 2. **Add your model details:**
    - Copy `model_card_template.qmd` to a new file (e.g., `my_model_card.qmd`).
-   - Replace the placeholders (e.g., `{{< model_name >}}`) with your model's information.
+   - Edit the values under the `params:` section at the top of the file to add your model name, overview, metrics, and usage notes.
    - Required images:
      - `nmfs-opensci-logo3.png` - NMFS OpenSci logo (download from [NOAA-NMFS-Brand-Resources](https://github.com/nmfs-opensci/NOAA-NMFS-Brand-Resources/blob/main/logos/nmfs-opensci-logo3.png))
      - `example_detection.png` - An example of your model's detection/output
      - `example_PR_curve.png` - Your model's precision-recall curve
-   - Update the placeholders `{{< metric_map >}}`, `{{< metric_precision >}}`, and `{{< metric_recall >}}` with your own numbers.
+   - The `metric_map`, `metric_precision`, and `metric_recall` parameters populate the dashboard-style value boxes.
 
 3. **Render the model card:**
    ```
