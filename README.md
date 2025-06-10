@@ -28,6 +28,7 @@ A modern, clean template for creating model cards using Quarto & Python. This te
      ```bash
      quarto install tinytex --no-prompt
      ```
+     The GitHub Actions workflow also installs TinyTeX automatically by setting `tinytex: true` in the Quarto setup step.
 
 2. **Add your model details:**
    - Copy `model_card_template.qmd` to a new file (e.g., `my_model_card.qmd`).
@@ -50,7 +51,7 @@ A modern, clean template for creating model cards using Quarto & Python. This te
 
 4. **Automate with GitHub Actions:**
    - A workflow in `.github/workflows/quarto-model-card.yml` renders the Quarto template whenever `.qmd` files change or the workflow is manually run.
-   - The workflow installs dependencies (including Jupyter) and TinyTeX, then renders the template.
+   - The workflow installs dependencies (including Jupyter) and uses the Quarto setup action with `tinytex: true` to install TinyTeX automatically.
    - The rendered model card (HTML/PDF) is uploaded as a workflow artifact for easy download.
 
 ### Template Features

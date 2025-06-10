@@ -23,9 +23,10 @@ jobs:
           pip install -r requirements.txt jupyter
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
-      - name: Install TinyTeX
-        run: |
-          quarto install tinytex --no-prompt
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tinytex: true
       - name: Render model card
         run: |
           quarto render model_card_template.qmd --output-dir _output
