@@ -9,26 +9,35 @@ A modern, clean template for creating model cards using Quarto & Python. This te
 - 📊 Clean, modern single-page layout
 - 🎨 NOAA/NMFS branded design with official colors
 - 📱 Responsive column layout
-- 🔄 Automated GitHub Actions workflow
+- 🎨 Quarto template with NOAA colors
+- 🔄 Automated GitHub Actions workflow for Quarto rendering
 - 📈 Support for data visualization
 - 🎯 Focus on key metrics and explanations
+- Metrics are displayed in dashboard-style value boxes using the provided CSS classes.
+
 
 ### How to Use
 
 1. **Install Requirements:**
    - Download and install Quarto from https://quarto.org/docs/get-started/
-   - For PDF output:
-     ```powershell
-     quarto install tinytex
+   - Install Python dependencies:
+     ```bash
+     pip install -r requirements.txt jupyter
      ```
+   - For PDF output (TinyTeX provides a minimal TeX distribution):
+     ```bash
+     quarto install tinytex --no-prompt
+     ```
+     The GitHub Actions workflow also installs TinyTeX automatically by setting `tinytex: true` in the Quarto setup step.
 
 2. **Add your model details:**
    - Copy `model_card_template.qmd` to a new file (e.g., `my_model_card.qmd`).
-   - Replace the placeholders (e.g., `{{< model_name >}}`) with your model's information.
+   - Edit the values under the `params:` section at the top of the file to add your model name, overview, metrics, and usage notes.
    - Required images:
      - `nmfs-opensci-logo3.png` - NMFS OpenSci logo (download from [NOAA-NMFS-Brand-Resources](https://github.com/nmfs-opensci/NOAA-NMFS-Brand-Resources/blob/main/logos/nmfs-opensci-logo3.png))
      - `example_detection.png` - An example of your model's detection/output
      - `example_PR_curve.png` - Your model's precision-recall curve
+   - The `metric_map`, `metric_precision`, and `metric_recall` parameters populate the dashboard-style value boxes.
 
 3. **Render the model card:**
    ```
@@ -39,6 +48,11 @@ A modern, clean template for creating model cards using Quarto & Python. This te
    quarto render my_model_card.qmd --to pdf
    ```
    The output will be in the `_output` folder.
+
+4. **Automate with GitHub Actions:**
+   - A workflow in `.github/workflows/quarto-model-card.yml` renders the Quarto template whenever `.qmd` files change or the workflow is manually run.
+   - The workflow installs dependencies (including Jupyter) and uses the Quarto setup action with `tinytex: true` to install TinyTeX automatically.
+   - The rendered model card (HTML/PDF) is uploaded as a workflow artifact for easy download.
 
 ### Template Features
 - Clean, one-page layout

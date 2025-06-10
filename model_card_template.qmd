@@ -1,0 +1,60 @@
+---
+title: "{{< var params.model_name >}}"
+format:
+  html:
+    toc: true
+    theme: cosmo
+    css: assets/model-card.css
+  pdf:
+    documentclass: article
+params:
+  model_name: "Model Name"
+  overview: "Add an overview of your model here."
+  metric_map: "0.0"
+  metric_precision: "0.0"
+  metric_recall: "0.0"
+  usage: "Describe how to use the model."
+---
+
+# Model Overview
+
+{{< var params.overview >}}
+
+## Key Metrics
+
+::: {.metrics}
+::: {.metric-box}
+:::{.metric-value}
+{{< var params.metric_map >}}
+:::
+:::{.metric-label}
+mAP50
+:::
+:::
+
+::: {.metric-box}
+:::{.metric-value}
+{{< var params.metric_precision >}}
+:::
+:::{.metric-label}
+Precision
+:::
+:::
+
+::: {.metric-box}
+:::{.metric-value}
+{{< var params.metric_recall >}}
+:::
+:::{.metric-label}
+Recall
+:::
+:::
+:::
+
+## Usage Guide
+
+{{< var params.usage >}}
+
+<footer>
+Generated with the NOAA Model Card Template
+</footer>
