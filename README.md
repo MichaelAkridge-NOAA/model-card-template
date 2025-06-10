@@ -20,6 +20,10 @@ A modern, clean template for creating model cards using Quarto & Python. This te
 
 1. **Install Requirements:**
    - Download and install Quarto from https://quarto.org/docs/get-started/
+   - Install Python dependencies:
+     ```bash
+     pip install -r requirements.txt jupyter
+     ```
    - For PDF output:
      ```powershell
      quarto install tinytex
@@ -46,6 +50,7 @@ A modern, clean template for creating model cards using Quarto & Python. This te
 
 4. **Automate with GitHub Actions:**
    - A workflow in `.github/workflows/quarto-model-card.yml` renders the Quarto template whenever `.qmd` files change or the workflow is manually run.
+   - The workflow installs dependencies (including Jupyter) and then renders the template.
    - The rendered model card (HTML/PDF) is uploaded as a workflow artifact for easy download.
 
 ### Template Features

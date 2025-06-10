@@ -7,7 +7,6 @@ format:
     css: assets/model-card.css
   pdf:
     documentclass: article
-jupyter: python3
 ---
 
 # Model Overview
