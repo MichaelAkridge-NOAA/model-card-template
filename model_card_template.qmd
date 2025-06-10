@@ -1,5 +1,5 @@
 ---
-title: "{{< param model_name >}}"
+title: "{{< var params.model_name >}}"
 format:
   html:
     toc: true
@@ -18,14 +18,14 @@ params:
 
 # Model Overview
 
-{{< param overview >}}
+{{< var params.overview >}}
 
 ## Key Metrics
 
 ::: {.metrics}
 ::: {.metric-box}
 :::{.metric-value}
-{{< param metric_map >}}
+{{< var params.metric_map >}}
 :::
 :::{.metric-label}
 mAP50
@@ -34,7 +34,7 @@ mAP50
 
 ::: {.metric-box}
 :::{.metric-value}
-{{< param metric_precision >}}
+{{< var params.metric_precision >}}
 :::
 :::{.metric-label}
 Precision
@@ -43,7 +43,7 @@ Precision
 
 ::: {.metric-box}
 :::{.metric-value}
-{{< param metric_recall >}}
+{{< var params.metric_recall >}}
 :::
 :::{.metric-label}
 Recall
@@ -53,7 +53,7 @@ Recall
 
 ## Usage Guide
 
-{{< param usage >}}
+{{< var params.usage >}}
 
 <footer>
 Generated with the NOAA Model Card Template
