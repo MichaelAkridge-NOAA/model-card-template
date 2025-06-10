@@ -16,7 +16,34 @@ jupyter: python3
 
 ## Key Metrics
 
-{{< metrics >}}
+::: {.metrics}
+::: {.metric-box}
+:::{.metric-value}
+{{< metric_map >}}
+:::
+:::{.metric-label}
+mAP50
+:::
+:::
+
+::: {.metric-box}
+:::{.metric-value}
+{{< metric_precision >}}
+:::
+:::{.metric-label}
+Precision
+:::
+:::
+
+::: {.metric-box}
+:::{.metric-value}
+{{< metric_recall >}}
+:::
+:::{.metric-label}
+Recall
+:::
+:::
+:::
 
 ## Usage Guide
 

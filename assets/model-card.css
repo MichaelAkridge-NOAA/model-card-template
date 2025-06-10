@@ -14,3 +14,31 @@ footer {
   margin-top: 2em;
   color: #1a1a1a;
 }
+
+/* Dashboard style boxes for key metrics */
+.metrics {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.metric-box {
+  background-color: #005CB9;
+  color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.8rem 1rem;
+  flex: 1 1 120px;
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+  opacity: 0.9;
+}

@@ -13,6 +13,8 @@ A modern, clean template for creating model cards using Quarto & Python. This te
 - 🔄 Automated GitHub Actions workflow for Quarto rendering
 - 📈 Support for data visualization
 - 🎯 Focus on key metrics and explanations
+- Metrics are displayed in dashboard-style value boxes using the provided CSS classes.
+
 
 ### How to Use
 
@@ -30,6 +32,7 @@ A modern, clean template for creating model cards using Quarto & Python. This te
      - `nmfs-opensci-logo3.png` - NMFS OpenSci logo (download from [NOAA-NMFS-Brand-Resources](https://github.com/nmfs-opensci/NOAA-NMFS-Brand-Resources/blob/main/logos/nmfs-opensci-logo3.png))
      - `example_detection.png` - An example of your model's detection/output
      - `example_PR_curve.png` - Your model's precision-recall curve
+   - Update the placeholders `{{< metric_map >}}`, `{{< metric_precision >}}`, and `{{< metric_recall >}}` with your own numbers.
 
 3. **Render the model card:**
    ```
