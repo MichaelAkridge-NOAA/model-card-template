@@ -7,7 +7,7 @@ from python.model_card_data import Metric, ModelCardData, infer_pipeline_tag
 
 
 SUPPORTED_TEMPLATES = {"standard"}
-SUPPORTED_THEMES = {"noaa"}
+SUPPORTED_THEMES = {"noaa", "noaa_brand_colors"}
 
 
 @dataclass(frozen=True)

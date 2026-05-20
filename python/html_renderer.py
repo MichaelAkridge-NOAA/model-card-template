@@ -19,7 +19,8 @@ from python.model_card_document import (
 )
 
 
-NOAA_THEME_CSS = """
+THEMES = {
+    "noaa": """
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -149,7 +150,141 @@ body {
   font-size: 0.95rem;
   text-align: center;
 }
+""",
+    "noaa_brand_colors": """
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: #FFFFFF;
+  color: #181818;
+  line-height: 1.4;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 12px;
+}
+
+.masthead {
+  text-align: left;
+  margin-bottom: 16px;
+  border-bottom: 3px solid #003087;
+  padding-bottom: 12px;
+}
+
+.template-badge {
+  display: inline-block;
+  margin-bottom: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #0085CA;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0 0 4px;
+  color: #003087;
+  font-size: 2rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: #646464;
+  font-size: 0.9rem;
+}
+
+.logo {
+  display: block;
+  max-width: 180px;
+  margin: 0 0 12px;
+}
+
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.card-section {
+  background: #FFFFFF;
+  border: 1px solid #E8E8E8;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.card-section h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #003087;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #0085CA;
+}
+
+.block-title {
+  margin: 8px 0 4px;
+  font-size: 0.9rem;
+  color: #0085CA;
+}
+
+.metric-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.metric-table th,
+.metric-table td {
+  padding: 6px;
+  border-bottom: 1px solid #E8E8E8;
+  text-align: left;
+}
+
+.metric-table th {
+  color: #003087;
+  background: #F9F9F9;
+}
+
+.metric-value {
+  font-weight: 700;
+}
+
+.image-block {
+  margin-top: 8px;
+}
+
+.image-block img {
+  width: 100%;
+  border-radius: 4px;
+}
+
+.image-block figcaption {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #646464;
+}
+
+.key-value-list,
+.bullet-list {
+  margin: 0;
+  padding-left: 14px;
+  font-size: 0.85rem;
+}
+
+.footer {
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid #E8E8E8;
+  color: #646464;
+  font-size: 0.8rem;
+  text-align: center;
+}
 """
+}
 
 
 def render_card_document(document: CardDocument, output_path: str) -> None:
@@ -175,7 +310,7 @@ def render_card_document_to_string(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{html.escape(document.title)}</title>
-  <style>{NOAA_THEME_CSS}</style>
+  <style>{THEMES.get(document.theme, THEMES["noaa"])}</style>
 </head>
 <body class="theme-{html.escape(document.theme)}">
   <main class="page template-{html.escape(document.template)}">
