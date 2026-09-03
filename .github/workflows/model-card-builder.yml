@@ -25,8 +25,6 @@ concurrency:
 jobs:
   build_model_card:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (
@@ -37,10 +35,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -209,22 +207,22 @@ jobs:
 
       - name: Configure GitHub Pages
         if: success() || steps.update-registry.outcome != 'failure'
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload Pages artifact
         if: success() || steps.update-registry.outcome != 'failure'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
       - name: Deploy to GitHub Pages
         if: success() || steps.update-registry.outcome != 'failure'
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
       - name: Upload HTML artifact
         if: success() || steps.generate-html.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: model-card-html
           path: |
