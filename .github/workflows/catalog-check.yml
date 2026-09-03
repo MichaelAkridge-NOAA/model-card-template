@@ -10,6 +10,12 @@ name: Catalog Check
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   generated-catalog:
@@ -36,3 +42,33 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python python/sync_hf_catalog.py --check-remote
       - run: python python/sync_sparrow_catalog.py --check-remote
+
+  deploy-pages:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: generated-catalog
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Build catalog
+        run: python python/build_catalog.py
+      - name: Prepare Pages site
+        run: |
+          mkdir -p site/gallery
+          cp -r gallery/. site/gallery/
+          cp -r assets site/gallery/assets
+          cp docs/index.html site/index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
