@@ -6,8 +6,19 @@ from typing import Optional, Union
 from python.model_card_data import Metric, ModelCardData, infer_pipeline_tag
 
 
-SUPPORTED_TEMPLATES = {"standard"}
-SUPPORTED_THEMES = {"noaa", "noaa_brand_colors"}
+SUPPORTED_TEMPLATES = {"standard", "graphical"}
+SUPPORTED_THEMES = {"noaa", "noaa_brand_colors", "graphical"}
+
+# Color scheme for graphical template sections
+SECTION_COLORS = {
+    "Model Summary": "#E0F0FF",  # light blue
+    "Intended Use": "#F0E0FF",    # light purple
+    "Model Performance": "#E0FFE0",  # light green
+    "Training Details": "#FFF0E0",  # light orange
+    "Usage Guide": "#FFE8E8",     # light coral
+    "Limitations": "#FFE0E0",     # light red
+    "Model Metadata": "#F0F0F0",  # light gray
+}
 
 
 @dataclass(frozen=True)
@@ -47,6 +58,7 @@ Block = Union[TextBlock, ImageBlock, MetricTableBlock, KeyValueListBlock, Bullet
 class CardSection:
     title: str
     blocks: list[Block]
+    color: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -167,12 +179,17 @@ def build_card_document(
         CardSection(
             title=section.title,
             blocks=[block for block in section.blocks if block is not None],
+            color=SECTION_COLORS.get(section.title) if template == "graphical" else None,
         )
         for section in sections
     ]
 
+    _version = model_card_data.model_details.version or ""
+    # Truncate git commit SHA (40 hex chars) to a short 7-char ref
+    if len(_version) == 40 and all(c in "0123456789abcdefABCDEF" for c in _version):
+        _version = _version[:7]
     subtitle = (
-        f"Version {model_card_data.model_details.version} | "
+        f"Version {_version} | "
         f"{model_card_data.model_details.release_date}"
     )
     footer = (
