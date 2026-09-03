@@ -43,7 +43,47 @@ This guide is for running Model Card Builder locally.
    python python/build.py --url https://huggingface.co/org/model --template standard --theme noaa
    ```
 
+## Catalog Dashboard
+
+NMFS-OSI metadata is curated in `catalogs/nmfs-osi.toml`. SPARROW metadata is a pinned copy of its authoritative upstream `catalog.toml` with commit and hash provenance.
+
+1. Rebuild all seven NMFS-OSI detail cards:
+
+   ```powershell
+   python python/sync_hf_catalog.py --build-cards
+   ```
+
+2. Generate the compatibility registry, normalized browser payload, and dashboard:
+
+   ```powershell
+   python python/build_catalog.py
+   python python/build_catalog.py --check
+   ```
+
+3. Refresh or verify the pinned SPARROW catalog:
+
+   ```powershell
+   python python/sync_sparrow_catalog.py
+   python python/sync_sparrow_catalog.py --check-remote
+   ```
+
+4. Detect NMFS-OSI additions or source revisions:
+
+   ```powershell
+   python python/sync_hf_catalog.py --check-remote
+   ```
+
+5. Preview the static gallery:
+
+   ```powershell
+   python -m http.server 8000
+   ```
+
+   Open `http://localhost:8000/gallery/`. The selected source, search, sort, and facets are stored in the URL.
+
 ## Notes
 
 - Local output HTML is written to Model_Card.html in the repository root.
-- The GitHub Actions workflow handles gallery updates and publishing automatically.
+- `gallery/cards.json`, `gallery/catalog-data.json`, and `gallery/index.html` are generated files; edit the TOML source rather than those outputs.
+- SPARROW model weights are not copied or hosted. SPARROW cards link to the pinned catalog's references and provenance.
+- Commercial-use status is catalog metadata, not a substitute for reviewing model, dataset, and content licenses.

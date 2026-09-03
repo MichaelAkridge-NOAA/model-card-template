@@ -15,7 +15,10 @@ from typing import Dict, List, Optional
 
 
 REGISTRY_PATH = Path(__file__).resolve().parent.parent / "gallery" / "cards.json"
-REQUIRED_FIELDS = {"model_id", "model_name", "model_url", "pipeline_type", "organization", "date_added"}
+REQUIRED_FIELDS = {
+    "model_id", "model_name", "model_url", "card_url", "pipeline_type",
+    "organization", "date_added", "description",
+}
 
 
 def add_card_to_registry(

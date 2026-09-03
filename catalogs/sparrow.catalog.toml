@@ -1,0 +1,1471 @@
+# Sparrow Model Zoo — catalog (single source of truth)
+#
+# This file is THE authoritative list of models in the zoo. The downloader
+# (download_models.sh), the README model table, and sibling projects
+# (sparrow-data, sparrow-ops) all read THIS file rather than hardcoding model
+# lists. Add a model = add one [[model]] block here.
+#
+# Taxonomy: domain (camera_trap | acoustics | overhead | marine_imagery | general) x
+#           task (detector | classifier | encoder | cascade).
+# `format` distinguishes what the artifact is:
+#   onnx    — desktop model, loadable by spe / server / Python (ONNX Runtime).
+#   tflite  — mobile-only variant, loaded by sparrow-engine-mobile, NOT desktop.
+#   cascade — a small pipeline descriptor referencing other models (no weights).
+# `download_models.sh` fetches ONLY `format = "onnx"` models by default; tflite
+# and cascade artifacts are fetched on demand (named explicitly or via --all).
+#
+# Zenodo stores per-model ZIPs named "<domain>__<task>__<id>.zip" (Zenodo has no
+# real folders; the "__" delimiter groups them when the file list is sorted).
+# Each ZIP unpacks to "<id>/" so the engine resolves models by flat id under the
+# models dir.
+#
+# Versioning policy: latest-version-only for internal dev iterations; flagship
+# families (MegaDetector) keep ALL versions. Superseded versions are dropped
+# from new bundles but remain on their original immutable DOI.
+#
+# `alias` lists prior ids a model was known by, so consumers pinned to an old
+# name still resolve (e.g. MDV5a was "Species_Net_MDV5a" before v0.10.0).
+
+schema_version = "1.1"
+
+[zenodo]
+record = "22018132"
+concept_doi = "10.5281/zenodo.20348978"
+version = "0.29.0"
+
+# ============================ Camera Trap — Detector ============================
+
+[[model]]
+id = "MDV5a"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v5a"
+status = "active"
+alias = ["Species_Net_MDV5a"]
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MDV5a.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector v5 (MDv5a), Morris / Beery et al.; https://github.com/agentmorris/MegaDetector/releases/tag/v5.0"
+
+[[model]]
+id = "MDV6-yolov10-c"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MDV6-yolov10-c.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector V6 model zoo, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+
+[[model]]
+id = "MDV6-yolov10-c-tflite"
+domain = "camera_trap"
+task = "detector"
+format = "tflite"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+flavor = "tflite-fp16"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MDV6-yolov10-c-tflite.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector V6 yolov10-c TFLite conversion; inherits MDV6-yolov10-c; https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md"
+
+[[model]]
+id = "MDV6-yolov10-e"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MDV6-yolov10-e.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector V6 model zoo, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+
+[[model]]
+id = "deepfaune-yolo8s"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["DeepFaune"]
+status = "active"
+license = "AGPL-3.0 AND CC-BY-SA-4.0"
+zip = "camera_trap__detector__deepfaune-yolo8s.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "DeepFaune consortium (CNRS and OFB)"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "DeepFaune detector (YOLOv8s), Rigoudy et al. 2023; https://plmlab.math.cnrs.fr/deepfaune/software; model parameters: https://pbil.univ-lyon1.fr/software/download/deepfaune/v1.3/deepfaune-yolov8s_960.pt"
+
+[[model]]
+id = "european_mammals"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__european_mammals.zip"
+display_name = "MD European Mammals"
+species_direct = true
+geo_scope = "regional"
+geo_regions = ["europe"]
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Microsoft AI for Good Lab (AI4G) regional YOLO detector (European mammals); canonical upstream URL UNVERIFIED; Sparrow redistribution DOI: https://doi.org/10.5281/zenodo.20563673"
+
+[[model]]
+id = "north_american_mammals"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__north_american_mammals.zip"
+display_name = "MD North American Mammals"
+species_direct = true
+geo_scope = "regional"
+geo_regions = ["north_america"]
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Microsoft AI for Good Lab (AI4G) regional YOLO detector (North American mammals); canonical upstream URL UNVERIFIED; Sparrow redistribution DOI: https://doi.org/10.5281/zenodo.20563673"
+
+[[model]]
+id = "sub_saharan"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__sub_saharan.zip"
+display_name = "MD Sub-Saharan Mammals"
+species_direct = true
+geo_scope = "regional"
+geo_regions = ["sub_saharan_africa"]
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+
+# --- MegaDetector variants added v0.12.0 (ONB-2) ---
+commercial_use = true
+reference = "Microsoft AI for Good Lab (AI4G) regional YOLO detector (Sub-Saharan mammals); canonical upstream URL UNVERIFIED; Sparrow redistribution DOI: https://doi.org/10.5281/zenodo.20563673"
+[[model]]
+id = "MDV5b"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v5b"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MDV5b.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector v5 (MDv5b), Morris / Beery et al.; https://github.com/agentmorris/MegaDetector/releases/tag/v5.0"
+
+[[model]]
+id = "MD1000-redwood"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v1000-redwood"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MD1000-redwood.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Dan Morris / MegaDetector project"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "MegaDetector v1000 redwood, Morris / MegaDetector team; https://github.com/agentmorris/MegaDetector/releases/tag/v1000.0; release notes: https://raw.githubusercontent.com/agentmorris/MegaDetector/main/docs/release-notes/mdv1000-release.md"
+
+[[model]]
+id = "MD1000-spruce"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v1000-spruce"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MD1000-spruce.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Dan Morris / MegaDetector project"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "MegaDetector v1000 spruce, Morris / MegaDetector team; https://github.com/agentmorris/MegaDetector/releases/tag/v1000.0; release notes: https://raw.githubusercontent.com/agentmorris/MegaDetector/main/docs/release-notes/mdv1000-release.md"
+
+[[model]]
+id = "MD1000-larch"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v1000-larch"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MD1000-larch.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Dan Morris / MegaDetector project"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "MegaDetector v1000 larch, Morris / MegaDetector team; https://github.com/agentmorris/MegaDetector/releases/tag/v1000.0; release notes: https://raw.githubusercontent.com/agentmorris/MegaDetector/main/docs/release-notes/mdv1000-release.md"
+
+[[model]]
+id = "MD1000-cedar"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v1000-cedar"
+status = "active"
+license = "GPL-3.0"
+zip = "camera_trap__detector__MD1000-cedar.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Dan Morris / MegaDetector project"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "MegaDetector v1000 cedar, Morris / MegaDetector team; https://github.com/agentmorris/MegaDetector/releases/tag/v1000.0; release notes: https://raw.githubusercontent.com/agentmorris/MegaDetector/main/docs/release-notes/mdv1000-release.md"
+
+[[model]]
+id = "MD1000-sorrel"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v1000-sorrel"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MD1000-sorrel.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Dan Morris / MegaDetector project"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "MegaDetector v1000 sorrel, Morris / MegaDetector team; https://github.com/agentmorris/MegaDetector/releases/tag/v1000.0; release notes: https://raw.githubusercontent.com/agentmorris/MegaDetector/main/docs/release-notes/mdv1000-release.md"
+
+[[model]]
+id = "MDV6-yolov9-c"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MDV6-yolov9-c.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector V6 model zoo, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+
+[[model]]
+id = "MDV6-yolov9-e"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MDV6-yolov9-e.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector V6 model zoo, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+
+[[model]]
+id = "MDV6-rtdetr-c"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "AGPL-3.0"
+zip = "camera_trap__detector__MDV6-rtdetr-c.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+
+# --- MegaDetector MIT variants added v0.13.0 (ONB-2; WongKinYiu/YOLO framework) ---
+commercial_use = true
+reference = "MegaDetector V6 model zoo, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+[[model]]
+id = "MDV6-mit-yolov9-c"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "MIT"
+zip = "camera_trap__detector__MDV6-mit-yolov9-c.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector V6 MIT YOLO-MIT variant, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+
+[[model]]
+id = "MDV6-mit-yolov9-e"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "MIT"
+zip = "camera_trap__detector__MDV6-mit-yolov9-e.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+
+# --- MegaDetector Apache-2.0 RT-DETRv2 variants added v0.14.0 (ONB-2-APA; lyuwenyu/RT-DETR framework) ---
+commercial_use = true
+reference = "MegaDetector V6 MIT YOLO-MIT variant, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+[[model]]
+id = "MDV6-apa-rtdetr-c"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "Apache-2.0"
+zip = "camera_trap__detector__MDV6-apa-rtdetr-c.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector V6 Apache RT-DETR variant, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+
+[[model]]
+id = "MDV6-apa-rtdetr-e"
+domain = "camera_trap"
+task = "detector"
+format = "onnx"
+family = ["MegaDetector"]
+version = "v6"
+status = "active"
+license = "Apache-2.0"
+zip = "camera_trap__detector__MDV6-apa-rtdetr-e.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "MegaDetector V6 Apache RT-DETR variant, Microsoft AI for Good Lab (AI4G); https://raw.githubusercontent.com/microsoft/MegaDetector/main/docs/model_zoo.md; weights DOI: https://doi.org/10.5281/zenodo.15398270"
+
+# ============================ Camera Trap — Classifier ==========================
+
+[[model]]
+id = "AI4G-Amazon-V2"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AI4G"]
+status = "active"
+license = "MIT"
+zip = "camera_trap__classifier__AI4G-Amazon-V2.zip"
+geo_scope = "regional"
+geo_regions = ["south_america"]
+geo_locality = "Amazon basin"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Microsoft AI for Good Lab (AI4G), Biodiversity model-zoo classifier table (AI4G-Amazon-V2 v2): https://microsoft.github.io/Biodiversity/model_zoo/classifiers/"
+
+[[model]]
+id = "AI4G-Serengeti"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AI4G"]
+status = "active"
+license = "MIT"
+zip = "camera_trap__classifier__AI4G-Serengeti.zip"
+geo_scope = "regional"
+geo_regions = ["east_africa"]
+geo_locality = "Serengeti, Tanzania"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Microsoft AI for Good Lab (AI4G), Biodiversity model-zoo classifier table (AI4G-Serengeti): https://microsoft.github.io/Biodiversity/model_zoo/classifiers/"
+
+[[model]]
+id = "Deepfaune-Europe"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["DeepFaune"]
+status = "active"
+license = "CC-BY-SA-4.0"
+zip = "camera_trap__classifier__Deepfaune-Europe.zip"
+geo_scope = "regional"
+geo_regions = ["europe"]
+developer = "DeepFaune consortium (CNRS and OFB)"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Microsoft Biodiversity model-zoo classifier table (Deepfaune-classification v1.3) and Rigoudy et al. 2023, DOI 10.1007/s10344-023-01742-7: https://microsoft.github.io/Biodiversity/model_zoo/classifiers/"
+
+[[model]]
+id = "Deepfaune-New-England"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["DeepFaune"]
+status = "active"
+license = "CC0-1.0"
+zip = "camera_trap__classifier__Deepfaune-New-England.zip"
+geo_scope = "regional"
+geo_regions = ["north_america"]
+geo_locality = "New England, USA"
+developer = "Clarfeld et al. / USGS"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Clarfeld et al. 2025, DeepFaune New England, USGS software release, DOI 10.5066/P13T4EKE: https://code.usgs.gov/vtcfwru/deepfaune-new-england"
+
+[[model]]
+id = "SpeciesNet-Crop"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["SpeciesNet"]
+status = "active"
+license = "Apache-2.0"
+zip = "camera_trap__classifier__SpeciesNet-Crop.zip"
+geo_scope = "global"
+geo_regions = []
+developer = "Google Research / SpeciesNet"
+ai4g_relationship = "third_party"
+
+# ---- AddaxAI PyTorch classifiers (ONB-1, Zenodo v0.11.0) ----
+commercial_use = true
+reference = "Google SpeciesNet / cameratrapai repository; Gadot et al. 2024, DOI 10.1049/cvi2.12318: https://github.com/google/cameratrapai"
+
+[[model]]
+id = "southwest-usa-v3"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "MIT"
+zip = "camera_trap__classifier__southwest-usa-v3.zip"
+display_name = "southwest-usa-v3-SDZWA"
+geo_scope = "regional"
+geo_regions = ["north_america"]
+geo_locality = "Southwest USA"
+developer = "Kyra Swanson / San Diego Zoo Wildlife Alliance"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "San Diego Zoo Wildlife Alliance, Southwest USA v3 model card: https://huggingface.co/Addax-Data-Science/Southwest_USA_v3"
+
+[[model]]
+id = "peruvian-andes"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "MIT"
+zip = "camera_trap__classifier__peruvian-andes.zip"
+display_name = "peruvian-andes-SDZWA"
+geo_scope = "regional"
+geo_regions = ["south_america"]
+geo_locality = "Peruvian Andes"
+developer = "Kyra Swanson / San Diego Zoo Wildlife Alliance"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "San Diego Zoo Wildlife Alliance, Peruvian Andes model card: https://huggingface.co/Addax-Data-Science/Peruvian_Andes"
+
+[[model]]
+id = "sub-saharan-drylands"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "camera_trap__classifier__sub-saharan-drylands.zip"
+display_name = "sub-saharan-drylands-Addax"
+geo_scope = "regional"
+geo_regions = ["sub_saharan_africa"]
+geo_locality = "eastern and southern drylands"
+developer = "Addax Data Science"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Addax Data Science, Sub-Saharan Drylands model card: https://huggingface.co/Addax-Data-Science/sub_saharan_drylands_v1.pt"
+
+[[model]]
+id = "manas-panthera"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "camera_trap__classifier__manas-panthera.zip"
+geo_scope = "regional"
+geo_regions = ["central_asia"]
+geo_locality = "Kyrgyzstan, Tian Shan"
+developer = "Hex Data"
+owner = "OSI-Panthera"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Hex·Data / OSI-Panthera, Panthera model card: https://huggingface.co/Hex-Data/Panthera"
+
+[[model]]
+id = "gifu-japan"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "MIT"
+zip = "camera_trap__classifier__gifu-japan.zip"
+display_name = "gifu-japan-GifuUniversity"
+geo_scope = "regional"
+geo_regions = ["east_asia"]
+geo_locality = "Gifu Prefecture, Japan"
+developer = "Gifu University"
+owner = "Masaki Ando"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Gifu University, Japan Gifu v0.2 model card: https://huggingface.co/Addax-Data-Science/Japan_Gifu_v0.2"
+
+[[model]]
+id = "hawaii-puaa"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "SpeciesNet"]
+status = "active"
+license = "CC-BY-NC-4.0"
+zip = "camera_trap__classifier__hawaii-puaa.zip"
+display_name = "hawaii-puaa-Addax"
+geo_scope = "regional"
+geo_regions = ["north_america"]
+geo_locality = "Hawaii, USA"
+developer = "Addax Data Science"
+owner = "USDA Forest Service Institute of Pacific Islands Forestry and The Nature Conservancy"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Addax Data Science, Hawaii AI Puaa v1.0 model card: https://huggingface.co/Addax-Data-Science/HWI-ADS-v1"
+
+[[model]]
+id = "central-india"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "SpeciesNet"]
+status = "active"
+license = "CC-BY-NC-4.0"
+zip = "camera_trap__classifier__central-india.zip"
+display_name = "central-india-Addax"
+geo_scope = "regional"
+geo_regions = ["south_asia"]
+geo_locality = "Central India"
+developer = "Addax Data Science"
+owner = "Wildlife Conservation Trust, India"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Addax Data Science / Wildlife Conservation Trust India, Central Indian Landscapes model card: https://huggingface.co/Addax-Data-Science/IND-ADS-v1"
+
+[[model]]
+id = "top-end-savanna"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "SpeciesNet"]
+status = "active"
+license = "CC-BY-NC-4.0"
+zip = "camera_trap__classifier__top-end-savanna.zip"
+display_name = "top-end-savanna-Addax"
+geo_scope = "regional"
+geo_regions = ["australia"]
+geo_locality = "Top End, Northern Territory"
+developer = "Addax Data Science"
+owner = "Charles Darwin University, Territory Natural Resource Management, and Warddeken Land Management"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Addax Data Science / Charles Darwin University / Territory Natural Resource Management / Warddeken Land Management, Top End Savanna model card: https://huggingface.co/Addax-Data-Science/ANT-ADS-v1"
+
+[[model]]
+id = "parks-victoria"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "SpeciesNet"]
+status = "active"
+license = "Apache-2.0"
+zip = "camera_trap__classifier__parks-victoria.zip"
+display_name = "parks-victoria-Addax"
+geo_scope = "regional"
+geo_regions = ["australia"]
+geo_locality = "Victoria"
+developer = "Addax Data Science"
+owner = "Parks Victoria"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Addax Data Science. VIC-ADS-v1 (Parks Victoria classifier). Hugging Face model repository: https://huggingface.co/Addax-Data-Science/VIC-ADS-v1"
+
+[[model]]
+id = "sw-borderlands"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "SpeciesNet"]
+status = "active"
+license = "Apache-2.0"
+zip = "camera_trap__classifier__sw-borderlands.zip"
+display_name = "sw-borderlands-Addax"
+geo_scope = "regional"
+geo_regions = ["north_america"]
+geo_locality = "USA-Mexico borderlands"
+developer = "Addax Data Science"
+owner = "Tohono O'odham Nation and University of Arizona"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Addax Data Science. SBUSA-ADS-v1 (Southwestern Borderlands USA classifier). Hugging Face model repository: https://huggingface.co/Addax-Data-Science/SBUSA-ADS-v1"
+
+[[model]]
+id = "ahdrift"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "SpeciesNet"]
+status = "active"
+license = "Apache-2.0"
+zip = "camera_trap__classifier__ahdrift.zip"
+display_name = "ahdrift-OSU-ColumbusZoo-Addax"
+geo_scope = "regional"
+geo_regions = ["north_america"]
+geo_locality = "Midwest USA"
+developer = "Ohio State University, Columbus Zoo and Aquarium, and Addax Data Science"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Addax Data Science. AHDRIFT-v1 (AHDriFT-ID Midwest US classifier). Hugging Face model repository: https://huggingface.co/Addax-Data-Science/AHDRIFT-v1"
+
+[[model]]
+id = "deep-forest-vision"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "camera_trap__classifier__deep-forest-vision.zip"
+display_name = "deep-forest-vision-MNHN-OFVI"
+geo_scope = "regional"
+geo_regions = ["central_africa"]
+geo_locality = "African tropical forests"
+developer = "Hugo Magaldi / One Forest Vision initiative"
+owner = "MNHN and One Forest Vision partners"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "MNHN-OFVI. AFR-DFV-v1 / DeepForestVision classifier. Hugging Face model repository: https://huggingface.co/Addax-Data-Science/AFR-DFV-v1; original project: https://github.com/MNHN-OFVI/DeepForestVision"
+
+[[model]]
+id = "awc135"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "camera_trap__classifier__awc135.zip"
+display_name = "awc135-AWC"
+geo_scope = "regional"
+geo_regions = ["australia"]
+developer = "Australian Wildlife Conservancy"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Australian Wildlife Conservancy. AWC135-AWC-v1 / Australian Wildlife Classifier. Hugging Face model repository: https://huggingface.co/Addax-Data-Science/AWC135-AWC-v1; source license: https://github.com/Australian-Wildlife-Conservancy-AWC/awc-wildlife-classifier/blob/main/LICENSE"
+
+[[model]]
+id = "namibian"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "camera_trap__classifier__namibian.zip"
+display_name = "namibian-Addax"
+geo_scope = "regional"
+geo_regions = ["southern_africa"]
+geo_locality = "Namib Desert, Namibia"
+developer = "Addax Data Science"
+owner = "Desert Lion Conservation and Smart Parks"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Addax Data Science. Namib-Desert-v1 (Namibian Desert classifier). Hugging Face model repository: https://huggingface.co/Addax-Data-Science/Namib-Desert-v1"
+
+[[model]]
+id = "iran"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "camera_trap__classifier__iran.zip"
+display_name = "iran-Addax"
+geo_scope = "regional"
+geo_regions = ["west_asia"]
+geo_locality = "Iran"
+developer = "Addax Data Science"
+owner = "Iranian Cheetah Society"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Addax Data Science. Iran_v1 (Iran classifier). Hugging Face model repository: https://huggingface.co/Addax-Data-Science/Iran_v1"
+
+[[model]]
+id = "nz-invasives"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "camera_trap__classifier__nz-invasives.zip"
+display_name = "nz-invasives-Addax"
+geo_scope = "regional"
+geo_regions = ["new_zealand"]
+developer = "Addax Data Science"
+owner = "New Zealand Department of Conservation"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Addax Data Science / New Zealand Department of Conservation. New_Zealand_v1 (New Zealand invasives classifier). Hugging Face model repository: https://huggingface.co/Addax-Data-Science/New_Zealand_v1"
+
+[[model]]
+id = "queensland"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "SpeciesNet"]
+status = "active"
+license = "CC-BY-4.0"
+zip = "camera_trap__classifier__queensland.zip"
+display_name = "queensland-WildObs"
+geo_scope = "regional"
+geo_regions = ["australia"]
+geo_locality = "Queensland Wet Tropics"
+developer = "Prakash Palanivelu Rajmohan and Renuka Sharma / WildObs"
+ai4g_relationship = "third_party"
+
+# single-label (softmax) classifier — engine softmax image-classifier support
+commercial_use = true
+reference = "WildObs. WetTropics_WildObs (Queensland Wet Tropics classifier). Hugging Face model repository: https://huggingface.co/Addax-Data-Science/WetTropics_WildObs"
+[[model]]
+id = "nz-species"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "camera_trap__classifier__nz-species.zip"
+display_name = "nz-species-wekaResearch"
+geo_scope = "regional"
+geo_regions = ["new_zealand"]
+developer = "wekaResearch / Olly Powell"
+owner = "New Zealand Department of Conservation"
+ai4g_relationship = "third_party"
+
+# ONB-3: AddaxAI TF/Keras classifiers (tf2onnx from .h5/.keras; softmax stripped -> engine softmax)
+commercial_use = false
+reference = "New Zealand Department of Conservation / wekaResearch. NZS-WEK-v3-03 (New Zealand Species v3.03 classifier). Hugging Face model repository: https://huggingface.co/Addax-Data-Science/NZS-WEK-v3-03"
+[[model]]
+id = "tropicam-ai"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "CC-BY-NC-ND-4.0"
+zip = "camera_trap__classifier__tropicam-ai.zip"
+display_name = "tropicam-ai-MNCN-CSIC"
+geo_scope = "regional"
+geo_regions = ["neotropics"]
+geo_locality = "Brazil, Peru, French Guiana, and Costa Rica"
+developer = "Andrea Zampetti / MNCN-CSIC"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Andrea Zampetti / MNCN-CSIC. NEO-MNCN-v1-0 / TropiCam-AI v1.0 classifier. Hugging Face model repository: https://huggingface.co/Addax-Data-Science/NEO-MNCN-v1-0; original project: https://github.com/andrewzamp/TropiCam-AI"
+
+[[model]]
+id = "terai-nepal"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "MEWC"]
+status = "active"
+license = "MIT"
+zip = "camera_trap__classifier__terai-nepal.zip"
+geo_scope = "regional"
+geo_regions = ["south_asia"]
+geo_locality = "Terai lowlands, Nepal"
+developer = "Alexander Merdian-Tarko / TeraiNet"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Alexander Merdian-Tarko. TeraiNet (Terai Nepal classifier). Hugging Face model repository: https://huggingface.co/alexvmt/TeraiNet; project details: https://github.com/alexvmt/TeraiNet"
+
+[[model]]
+id = "tasmanian-vertebrates"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI", "MEWC"]
+status = "active"
+license = "CC-BY-4.0"
+zip = "camera_trap__classifier__tasmanian-vertebrates.zip"
+display_name = "tasmanian-vertebrates-MEWC"
+geo_scope = "regional"
+geo_regions = ["australia"]
+geo_locality = "Tasmania"
+developer = "Barry Brook / MEWC / University of Tasmania"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "MEWC. Tasmanian_vertebrates classifier. Hugging Face model repository: https://huggingface.co/Addax-Data-Science/Tasmanian_vertebrates; MEWC source: https://github.com/zaandahl/mewc"
+
+[[model]]
+id = "peruvian-amazon-sdzwa"
+domain = "camera_trap"
+task = "classifier"
+format = "onnx"
+family = ["AddaxAI"]
+status = "active"
+license = "MIT"
+zip = "camera_trap__classifier__peruvian-amazon-sdzwa.zip"
+display_name = "peruvian-amazon-SDZWA"
+geo_scope = "regional"
+geo_regions = ["south_america"]
+geo_locality = "Peruvian Amazon"
+developer = "Mathias Tobler / San Diego Zoo Wildlife Alliance"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "San Diego Zoo Wildlife Alliance. Peruvian_Amazon classifier. Hugging Face model repository: https://huggingface.co/Addax-Data-Science/Peruvian_Amazon"
+
+# ============================ Acoustics — Detector ==============================
+
+[[model]]
+id = "md-audiobirds-v1"
+domain = "acoustics"
+task = "detector"
+format = "onnx"
+family = []
+status = "active"
+license = "MIT"
+zip = "acoustics__detector__md-audiobirds-v1.zip"
+species_direct = false
+detector_gate_class = "bird"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Microsoft AI for Good Lab (AI4G). MegaDetector-Acoustic / MD_AudioBirds_V1. Source: https://github.com/microsoft/MegaDetector-Acoustic; model-zoo page: https://microsoft.github.io/Biodiversity/model_zoo/bioacoustics/. Cite: Hernandez et al. 2024, Pytorch-Wildlife: A Collaborative Deep Learning Framework for Conservation, arXiv:2405.12930."
+
+[[model]]
+id = "orca-detector-dclde2026-v5"
+domain = "acoustics"
+task = "detector"
+format = "onnx"
+family = ["DCLDE-orca"]
+version = "v5"
+status = "active"
+alias = ["orca-detector-dclde2026-v3"]
+license = "MIT"
+zip = "acoustics__detector__orca-detector-dclde2026-v5.zip"
+species_direct = false
+detector_gate_class = "Orca"
+geo_scope = "regional"
+geo_regions = ["north_pacific"]
+geo_locality = "Pacific Northwest and Salish Sea"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Microsoft AI for Good Lab (AI4G) and Microsoft Pytorch-Wildlife project. Sparrow Engine model zoo v0.21.0: orca-detector-dclde2026-v5. Zenodo. https://doi.org/10.5281/zenodo.21346269. Upstream/challenge context: DCLDE 2026 killer whale detection and ecotype classification dataset/challenge."
+
+[[model]]
+id = "orca-detector-v5-fp16-tflite"
+domain = "acoustics"
+task = "detector"
+format = "tflite"
+family = ["DCLDE-orca"]
+version = "v5"
+status = "active"
+alias = ["orca-detector-v3-fp16-tflite"]
+flavor = "tflite-fp16"
+license = "MIT"
+zip = "acoustics__detector__orca-detector-v5-fp16-tflite.zip"
+description = "DCLDE 2026 orca cascade — Stage 1 detector v5 (3-class screening checkpoint 3class_sparrow_ft_v5), fp16 TFLite/LiteRT build (mobile). Mel-input ResNet18 → binary orca sigmoid."
+species_direct = false
+detector_gate_class = "Orca"
+geo_scope = "regional"
+geo_regions = ["north_pacific"]
+geo_locality = "Pacific Northwest and Salish Sea"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Converted TFLite FP16 variant of orca-detector-dclde2026-v5. Reference the ONNX sibling: Microsoft AI for Good Lab (AI4G) and Microsoft Pytorch-Wildlife project, Sparrow Engine model zoo v0.21.0, https://doi.org/10.5281/zenodo.21346269."
+
+[[model]]
+id = "orca-detector-v5-int8-tflite"
+domain = "acoustics"
+task = "detector"
+format = "tflite"
+family = ["DCLDE-orca"]
+version = "v5"
+status = "active"
+alias = ["orca-detector-v3-int8-tflite"]
+flavor = "tflite-int8"
+license = "MIT"
+zip = "acoustics__detector__orca-detector-v5-int8-tflite.zip"
+description = "DCLDE 2026 orca cascade — Stage 1 detector v5 (3-class screening checkpoint 3class_sparrow_ft_v5), INT8 dynamic-range TFLite/LiteRT build (mobile). Mel-input ResNet18 → binary orca sigmoid."
+species_direct = false
+detector_gate_class = "Orca"
+geo_scope = "regional"
+geo_regions = ["north_pacific"]
+geo_locality = "Pacific Northwest and Salish Sea"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Converted TFLite INT8 variant of orca-detector-dclde2026-v5. Reference the ONNX sibling: Microsoft AI for Good Lab (AI4G) and Microsoft Pytorch-Wildlife project, Sparrow Engine model zoo v0.21.0, https://doi.org/10.5281/zenodo.21346269."
+
+# ============================ Acoustics — Classifier ============================
+
+[[model]]
+id = "orca-ecotype-dclde2026-v1"
+domain = "acoustics"
+task = "classifier"
+format = "onnx"
+family = ["DCLDE-orca"]
+version = "v1"
+status = "active"
+license = "MIT"
+zip = "acoustics__classifier__orca-ecotype-dclde2026-v1.zip"
+geo_scope = "regional"
+geo_regions = ["north_pacific"]
+geo_locality = "Pacific Northwest and Salish Sea"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Microsoft AI for Good Lab (AI4G) and Microsoft Pytorch-Wildlife project. Sparrow Engine model zoo v0.5.0: orca-ecotype-dclde2026-v1. Zenodo. https://doi.org/10.5281/zenodo.20563673. Upstream/challenge context: DCLDE 2026 killer whale detection and ecotype classification dataset/challenge."
+
+[[model]]
+id = "orca-ecotype-melinput-fp16-tflite"
+domain = "acoustics"
+task = "classifier"
+format = "tflite"
+family = ["DCLDE-orca"]
+status = "active"
+flavor = "tflite-fp16"
+license = "MIT"
+zip = "acoustics__classifier__orca-ecotype-melinput-fp16-tflite.zip"
+geo_scope = "regional"
+geo_regions = ["north_pacific"]
+geo_locality = "Pacific Northwest and Salish Sea"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Converted TFLite FP16 variant of orca-ecotype-dclde2026-v1. Reference the ONNX sibling: Microsoft AI for Good Lab (AI4G) and Microsoft Pytorch-Wildlife project, Sparrow Engine model zoo v0.5.0, https://doi.org/10.5281/zenodo.20563673."
+
+[[model]]
+id = "orca-ecotype-melinput-int8-tflite"
+domain = "acoustics"
+task = "classifier"
+format = "tflite"
+family = ["DCLDE-orca"]
+status = "active"
+flavor = "tflite-int8"
+license = "MIT"
+zip = "acoustics__classifier__orca-ecotype-melinput-int8-tflite.zip"
+geo_scope = "regional"
+geo_regions = ["north_pacific"]
+geo_locality = "Pacific Northwest and Salish Sea"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Converted TFLite INT8 variant of orca-ecotype-dclde2026-v1. Reference the ONNX sibling: Microsoft AI for Good Lab (AI4G) and Microsoft Pytorch-Wildlife project, Sparrow Engine model zoo v0.5.0, https://doi.org/10.5281/zenodo.20563673."
+
+[[model]]
+id = "perch-v2"
+domain = "acoustics"
+task = "classifier"
+format = "onnx"
+family = []
+status = "active"
+license = "Apache-2.0"
+zip = "acoustics__classifier__perch-v2.zip"
+geo_scope = "global"
+geo_regions = []
+developer = "Google Research (Hamer et al.)"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Google Research. Perch / Perch 2 bioacoustics model. Source: https://github.com/google-research/perch. Cite: van Merriënboer, Dumoulin, Hamer et al., Perch 2.0: The Bittern Lesson for Bioacoustics, arXiv:2508.04665, https://arxiv.org/abs/2508.04665."
+
+[[model]]
+id = "buzzdetect"
+domain = "acoustics"
+task = "classifier"
+format = "onnx"
+family = ["BuzzDetect", "YAMNet"]
+status = "active"
+license = "MIT AND Apache-2.0"
+zip = "acoustics__classifier__buzzdetect.zip"
+description = "BuzzDetect 13-class acoustic-event classifier with the YAMNet frontend fused into the graph."
+geo_scope = "global"
+geo_regions = []
+display_name = "BuzzDetect Acoustic Event Classifier"
+developer = "OSU Bee Lab; YAMNet backbone by Google"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "OSU Bee Lab BuzzDetect v1.0.1, source revision a06f36f7d65ade8d4ff3845bb1cac2ba46c357e6: https://github.com/OSU-Bee-Lab/buzzdetect/tree/a06f36f7d65ade8d4ff3845bb1cac2ba46c357e6. YAMNet: https://github.com/tensorflow/models/tree/master/research/audioset/yamnet."
+
+# FP16 variant of perch-v2. Same labels and same top-1 predictions (76/76 on the
+# conversion corpus; verified through the engine on real recordings), and half
+# the download and GPU memory. NOTE: unlike bioclip-2-fp16 this is NOT faster —
+# measured 0.65x / 0.91x / 0.97x of FP32 at batch 1 / 8 / 32 on an RTX 6000 Ada.
+# Choose it when storage or VRAM is the constraint, not for latency.
+# Flavored entries are NOT part of the default download set.
+[[model]]
+id = "perch-v2-fp16"
+domain = "acoustics"
+task = "classifier"
+format = "onnx"
+family = []
+flavor = "onnx-fp16"
+status = "active"
+license = "Apache-2.0"
+zip = "acoustics__classifier__perch-v2-fp16.zip"
+geo_scope = "global"
+geo_regions = []
+developer = "Google Research (Hamer et al.)"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "FP16-converted variant of perch-v2. Reference the FP32 sibling: Google Research. Perch / Perch 2 bioacoustics model. Source: https://github.com/google-research/perch. Cite: van Merriënboer, Dumoulin, Hamer et al., Perch 2.0: The Bittern Lesson for Bioacoustics, arXiv:2508.04665, https://arxiv.org/abs/2508.04665."
+
+# ============================ Acoustics — Cascade ===============================
+
+[[model]]
+id = "orca-cascade"
+domain = "acoustics"
+task = "cascade"
+format = "cascade"
+family = ["DCLDE-orca"]
+status = "active"
+license = "MIT"
+zip = "acoustics__cascade__orca-cascade.zip"
+geo_scope = "regional"
+geo_regions = ["north_pacific"]
+geo_locality = "Pacific Northwest and Salish Sea"
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Pipeline descriptor combining orca-detector-v5-fp16-tflite and orca-ecotype-melinput-fp16-tflite. Cite both component model references; updated for Sparrow Engine model zoo v0.21.0, https://doi.org/10.5281/zenodo.21346269."
+
+# ============================ Overhead — Detector ===============================
+
+[[model]]
+id = "HerdNet_General_Dataset_2022"
+domain = "overhead"
+task = "detector"
+format = "onnx"
+family = []
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "overhead__detector__HerdNet_General_Dataset_2022.zip"
+species_direct = true
+geo_scope = "regional"
+geo_regions = ["sub_saharan_africa"]
+geo_locality = "aerial savanna"
+developer = "University of Liege, Gembloux Agro-Bio Tech (Delplanque et al.)"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Delplanque, A., Foucher, S., Théau, J., Bussière, E., Vermeulen, C., and Lejeune, P. From crowd to herd counting: How to precisely detect and count African mammals using aerial imagery and deep learning? ISPRS Journal of Photogrammetry and Remote Sensing 197 (2023), 167-180. https://doi.org/10.1016/j.isprsjprs.2023.01.025. Source: https://github.com/Alexandre-Delplanque/HerdNet."
+
+[[model]]
+id = "OWL"
+domain = "overhead"
+task = "detector"
+format = "onnx"
+family = []
+status = "active"
+license = "MIT"
+zip = "overhead__detector__OWL.zip"
+species_direct = false
+detector_gate_class = "animal"
+geo_scope = "global"
+geo_regions = []
+developer = "Microsoft AI for Good Lab (AI4G)"
+ai4g_relationship = "first_party"
+commercial_use = true
+reference = "Chacón et al. Overhead Wildlife Locator (OWL): Benchmarking Weakly Supervised Learning for Aerial Wildlife Surveys. arXiv:2606.13911. https://arxiv.org/abs/2606.13911. Source (MIT): https://github.com/microsoft/MegaDetector-Overhead (Microsoft AI for Good Lab (AI4G))."
+
+[[model]]
+id = "imageomics-mmla"
+domain = "overhead"
+task = "detector"
+format = "onnx"
+family = ["Imageomics", "YOLO11"]
+status = "active"
+license = "MIT"
+zip = "overhead__detector__imageomics-mmla.zip"
+description = "Imageomics MMLA aerial wildlife detector: YOLO11m with four low-altitude drone classes (Zebra, Giraffe, Onager, Dog), converted from the pinned MIT checkpoint to fixed NCHW ONNX with graph NMS."
+species_direct = true
+geo_scope = "regional"
+geo_regions = ["sub_saharan_africa", "north_america"]
+geo_locality = "Mpala Research Centre and Ol Pejeta Conservancy, Kenya; The Wilds, Ohio, USA"
+display_name = "Imageomics MMLA Aerial Wildlife Detector"
+developer = "Imageomics Institute (Jenna Kline, The Ohio State University)"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Kline, J., et al. MMLA: Multi-Environment, Multi-Species, Low-Altitude Aerial Footage Dataset. arXiv:2504.07744. https://arxiv.org/abs/2504.07744. Source revision 7930ec0d758400bdc04e355fc4565ba67b36cdca: https://huggingface.co/imageomics/mmla/tree/7930ec0d758400bdc04e355fc4565ba67b36cdca"
+
+[[model]]
+id = "deepforest-tree"
+domain = "overhead"
+task = "detector"
+format = "onnx"
+family = ["DeepForest", "RetinaNet"]
+status = "active"
+license = "MIT"
+zip = "overhead__detector__deepforest-tree.zip"
+description = "DeepForest single-class tree-crown detector for 400 x 400 airborne-image tiles."
+species_direct = false
+detector_gate_class = "tree"
+geo_scope = "global"
+geo_regions = []
+display_name = "DeepForest Tree-Crown Detector"
+developer = "DeepForest project / Weecology"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Weinstein et al., DeepForest. Pinned model revision cc21436bc5d572dde8ff5f93c1e71a32f563cace: https://huggingface.co/weecology/deepforest-tree/tree/cc21436bc5d572dde8ff5f93c1e71a32f563cace."
+
+[[model]]
+id = "deepforest-bird"
+domain = "overhead"
+task = "detector"
+format = "onnx"
+family = ["DeepForest", "RetinaNet"]
+status = "active"
+license = "MIT"
+zip = "overhead__detector__deepforest-bird.zip"
+description = "DeepForest single-class aerial bird detector for 400 x 400 RGB tiles."
+species_direct = false
+detector_gate_class = "bird"
+geo_scope = "global"
+geo_regions = []
+display_name = "DeepForest Aerial Bird Detector"
+developer = "DeepForest project / Weecology"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "DeepForest aerial bird detector, pinned model revision bf68705a43f85cdf82148448467b68d60cf1ae80: https://huggingface.co/weecology/deepforest-bird/tree/bf68705a43f85cdf82148448467b68d60cf1ae80."
+
+[[model]]
+id = "ducknet"
+domain = "overhead"
+task = "detector"
+format = "onnx"
+family = ["DuckNet", "RetinaNet"]
+status = "active"
+license = "CC-BY-NC-SA-4.0"
+zip = "overhead__detector__ducknet.zip"
+description = "DuckNet RetinaNet detector for nine North American waterfowl classes in UAV imagery."
+species_direct = false
+detector_gate_class = "waterfowl"
+geo_scope = "regional"
+geo_regions = ["north_america"]
+geo_locality = "Mississippi Alluvial Valley, USA"
+display_name = "DuckNet Waterfowl Detector"
+developer = "DuckNet authors: Loken, Ringelman, Mini, James, and Mitchell"
+ai4g_relationship = "third_party"
+commercial_use = false
+reference = "Loken, Z. J., Ringelman, K. M., Mini, A., James, D., and Mitchell, M. (2025). DuckNet: an open-source deep learning tool for waterfowl species identification in UAV imagery. https://doi.org/10.1002/rse2.70028. Source revision 68a5ff0440383b7452d7a5f51c5735c83c01cc58: https://github.com/mkmitchell/DuckNet/tree/68a5ff0440383b7452d7a5f51c5735c83c01cc58."
+
+# ============================ Marine Imagery — Detector ========================
+
+[[model]]
+id = "fathomnet-mbari-315k"
+domain = "marine_imagery"
+task = "detector"
+format = "onnx"
+family = ["FathomNet", "YOLOv8"]
+status = "active"
+license = "CC-BY-4.0"
+zip = "marine_imagery__detector__fathomnet-mbari-315k.zip"
+description = "FathomNet MBARI Monterey Bay 315k detector: YOLOv8x with 499 midwater and benthic taxonomic and morphotaxonomic classes, converted from the pinned CC-BY-4.0 checkpoint to fixed NCHW ONNX with graph NMS."
+species_direct = true
+geo_scope = "regional"
+geo_regions = ["north_america"]
+geo_locality = "Monterey Bay, California, USA"
+display_name = "FathomNet MBARI 315k Detector"
+developer = "CVisionAI / Monterey Bay Aquarium Research Institute (MBARI)"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "FathomNet MBARI Monterey Bay 315k YOLOv8 model, source revision f4a839a78214441e32bee1928839fa7578c2bcd8: https://huggingface.co/FathomNet/MBARI-315k-yolov8/tree/f4a839a78214441e32bee1928839fa7578c2bcd8"
+
+[[model]]
+id = "fathomnet-vme"
+domain = "marine_imagery"
+task = "detector"
+format = "onnx"
+family = ["FathomNet", "YOLOv8"]
+status = "active"
+license = "CC-BY-4.0"
+zip = "marine_imagery__detector__fathomnet-vme.zip"
+description = "FathomNet vulnerable marine ecosystem detector: YOLOv8x with four high-level benthic indicator classes, converted from the pinned CC-BY-4.0 checkpoint to fixed NCHW ONNX with graph NMS."
+species_direct = true
+geo_scope = "global"
+geo_regions = []
+display_name = "FathomNet VME Detector"
+developer = "FathomNet / Monterey Bay Aquarium Research Institute (MBARI)"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "FathomNet vulnerable marine ecosystems model, source revision dffb2d9c6178bab0be813752e06b474b9b6515a0: https://huggingface.co/FathomNet/vulnerable-marine-ecosystems/tree/dffb2d9c6178bab0be813752e06b474b9b6515a0"
+
+[[model]]
+id = "fathomnet-trash"
+domain = "marine_imagery"
+task = "detector"
+format = "onnx"
+family = ["FathomNet", "YOLOv8"]
+status = "active"
+license = "CC-BY-4.0"
+zip = "marine_imagery__detector__fathomnet-trash.zip"
+description = "FathomNet marine trash detector: YOLOv8x with 13 debris, fauna, plant, and ROV classes, converted from the pinned CC-BY-4.0 checkpoint to fixed NCHW ONNX with graph NMS."
+species_direct = true
+geo_scope = "global"
+geo_regions = []
+display_name = "FathomNet Trash Detector"
+developer = "FathomNet / Monterey Bay Aquarium Research Institute (MBARI)"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "FathomNet trash detector, source revision 1604489392f409ab57dc82a831c7e22031dc6762: https://huggingface.co/FathomNet/trash-detector/tree/1604489392f409ab57dc82a831c7e22031dc6762"
+
+[[model]]
+id = "fathomnet-megafish-yolov5s-640"
+domain = "marine_imagery"
+task = "detector"
+format = "onnx"
+family = ["FathomNet", "MegaFishDetector", "YOLOv5"]
+version = "v0"
+status = "active"
+license = "MIT"
+zip = "marine_imagery__detector__fathomnet-megafish-yolov5s-640.zip"
+description = "MegaFishDetector v0 YOLOv5s at 640px: the smallest and fastest generic-fish option (28.1 MB ONNX; 1.54 ms GPU p50 in the onboarding benchmark), with lower measured recall than the large sibling."
+species_direct = false
+detector_gate_class = "fish"
+geo_scope = "global"
+geo_regions = []
+display_name = "FathomNet MegaFishDetector YOLOv5s 640"
+developer = "WARPLab, Woods Hole Oceanographic Institution; distributed via FathomNet"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Yang, D., Cai, L., Jamieson, S., and Girdhar, Y. Biological Hotspot Mapping in Coral Reefs with Robotic Visual Surveys. CV4Animals at CVPR 2023. arXiv:2305.02330. Source revision ea16af9d508cdcf0151f89422358e6019fb05f36: https://huggingface.co/FathomNet/megafishdetector/tree/ea16af9d508cdcf0151f89422358e6019fb05f36"
+
+[[model]]
+id = "fathomnet-megafish-yolov5m-1280"
+domain = "marine_imagery"
+task = "detector"
+format = "onnx"
+family = ["FathomNet", "MegaFishDetector", "YOLOv5"]
+version = "v0"
+status = "active"
+license = "MIT"
+zip = "marine_imagery__detector__fathomnet-megafish-yolov5m-1280.zip"
+description = "MegaFishDetector v0 YOLOv5m at its upstream-native 1280px input (83.5 MB ONNX; 6.49 ms GPU p50). It did not lead latency or quality on the onboarding corpus, so use it when the upstream 1280px model is specifically required."
+species_direct = false
+detector_gate_class = "fish"
+geo_scope = "global"
+geo_regions = []
+display_name = "FathomNet MegaFishDetector YOLOv5m 1280"
+developer = "WARPLab, Woods Hole Oceanographic Institution; distributed via FathomNet"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Yang, D., Cai, L., Jamieson, S., and Girdhar, Y. Biological Hotspot Mapping in Coral Reefs with Robotic Visual Surveys. CV4Animals at CVPR 2023. arXiv:2305.02330. Source revision ea16af9d508cdcf0151f89422358e6019fb05f36: https://huggingface.co/FathomNet/megafishdetector/tree/ea16af9d508cdcf0151f89422358e6019fb05f36"
+
+[[model]]
+id = "fathomnet-megafish-yolov5l-640"
+domain = "marine_imagery"
+task = "detector"
+format = "onnx"
+family = ["FathomNet", "MegaFishDetector", "YOLOv5"]
+version = "v0"
+status = "active"
+license = "MIT"
+zip = "marine_imagery__detector__fathomnet-megafish-yolov5l-640.zip"
+description = "MegaFishDetector v0 YOLOv5l at 640px: the measured quality option (highest partial-GT recall, consensus recall, and small/distant-fish coverage; 184.5 MB ONNX; 3.61 ms GPU p50)."
+species_direct = false
+detector_gate_class = "fish"
+geo_scope = "global"
+geo_regions = []
+display_name = "FathomNet MegaFishDetector YOLOv5l 640"
+developer = "WARPLab, Woods Hole Oceanographic Institution; distributed via FathomNet"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Yang, D., Cai, L., Jamieson, S., and Girdhar, Y. Biological Hotspot Mapping in Coral Reefs with Robotic Visual Surveys. CV4Animals at CVPR 2023. arXiv:2305.02330. Source revision ea16af9d508cdcf0151f89422358e6019fb05f36: https://huggingface.co/FathomNet/megafishdetector/tree/ea16af9d508cdcf0151f89422358e6019fb05f36"
+
+# ============================ General — Encoder ============================
+
+[[model]]
+id = "bioclip-2"
+domain = "general"
+task = "encoder"
+format = "onnx"
+family = ["BioCLIP"]
+version = "v2"
+status = "active"
+license = "MIT"
+zip = "general__encoder__bioclip-2.zip"
+geo_scope = "foundational"
+geo_regions = []
+developer = "Imageomics Institute and Ohio State University"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Gu, J., Stevens, S., Campolongo, E. G., Thompson, M. J., Zhang, N., Wu, J., Kopanev, A., Mai, Z., White, A. E., Balhoff, J., Dahdul, W. M., Rubenstein, D., Lapp, H., Berger-Wolf, T., Chao, W.-L., and Su, Y. BioCLIP 2: Emergent Properties from Scaling Hierarchical Contrastive Learning. NeurIPS 2025. https://arxiv.org/abs/2505.23883. Model: imageomics/bioclip-2, Hugging Face, DOI https://doi.org/10.57967/hf/5765, https://huggingface.co/imageomics/bioclip-2."
+
+# FP16 variant of bioclip-2. Same graph and same 768-d cosine embedding space
+# (`[embedding] version` unchanged), stored in half precision: 1.71x faster on a
+# CUDA GPU and half the download. Measured against the FP32 entry on 100 real
+# camera-trap photos: vector cosine min 0.99985, top-1 neighbour 99/100.
+# Flavored entries are NOT part of the default download set.
+[[model]]
+id = "bioclip-2-fp16"
+domain = "general"
+task = "encoder"
+format = "onnx"
+family = ["BioCLIP"]
+version = "v2"
+flavor = "onnx-fp16"
+status = "active"
+license = "MIT"
+zip = "general__encoder__bioclip-2-fp16.zip"
+geo_scope = "foundational"
+geo_regions = []
+developer = "Imageomics Institute and Ohio State University"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "FP16-converted variant of bioclip-2. Reference the FP32 sibling: Gu, J., Stevens, S., Campolongo, E. G., Thompson, M. J., Zhang, N., Wu, J., Kopanev, A., Mai, Z., White, A. E., Balhoff, J., Dahdul, W. M., Rubenstein, D., Lapp, H., Berger-Wolf, T., Chao, W.-L., and Su, Y. BioCLIP 2: Emergent Properties from Scaling Hierarchical Contrastive Learning. NeurIPS 2025. https://arxiv.org/abs/2505.23883. Model: imageomics/bioclip-2, Hugging Face, DOI https://doi.org/10.57967/hf/5765, https://huggingface.co/imageomics/bioclip-2."
+
+# BioCLIP 2.5 is a separate 1024-d embedding space, not an in-place upgrade of
+# the 768-d bioclip-2 entries. It passed the predeclared IDLE-OO + Rare Species
+# + NeWT battery by +3.43 percentage points, at 2.08x the FP16 batch latency.
+# Keep it opt-in so consumers migrate and rebuild indexes deliberately.
+[[model]]
+id = "bioclip-25"
+domain = "general"
+task = "encoder"
+format = "onnx"
+family = ["BioCLIP"]
+version = "1.0.0"
+flavor = "onnx-fp16"
+status = "active"
+license = "MIT"
+zip = "general__encoder__bioclip-25.zip"
+display_name = "BioCLIP 2.5 Huge"
+geo_scope = "foundational"
+geo_regions = []
+developer = "Imageomics Institute and Ohio State University"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Gu, J., Stevens, S., Campolongo, E. G., Thompson, M. J., Zhang, N., Wu, J., Kopanev, A., Mai, Z., White, A. E., Balhoff, J., Dahdul, W. M., Rubenstein, D., Lapp, H., Berger-Wolf, T., Chao, W.-L., and Su, Y. BioCLIP 2: Emergent Properties from Scaling Hierarchical Contrastive Learning. NeurIPS 2025. https://arxiv.org/abs/2505.23883. BioCLIP 2.5 Huge model v1.0.0, pinned revision 191d741545e4c741cdef4b22c6eb69c945c1e592: https://huggingface.co/imageomics/bioclip-2.5-vith14."
+
+[[model]]
+id = "dinov3-vitl16"
+domain = "general"
+task = "encoder"
+format = "onnx"
+family = ["DINOv3"]
+version = "vitl16-lvd1689m"
+status = "active"
+license = "DINOv3 License"
+zip = "general__encoder__dinov3-vitl16.zip"
+geo_scope = "foundational"
+geo_regions = []
+developer = "Meta AI"
+ai4g_relationship = "third_party"
+commercial_use = true
+reference = "Siméoni, O., Vo, H. V., Seitzer, M., Baldassarre, F., Oquab, M., Jose, C., Khalidov, V., Szafraniec, M., et al. DINOv3. Meta AI, 2025. https://arxiv.org/abs/2508.10104. Model: facebook/dinov3-vitl16-pretrain-lvd1689m (LVD-1689M pretrain, ViT-L/16, 1024-d), Hugging Face, https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m. License: DINOv3 License (custom Meta license)."

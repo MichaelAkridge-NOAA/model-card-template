@@ -131,7 +131,7 @@ jobs:
               pipeline_type = "other"
           
           # Get model name
-          model_name = model_data.get("model", {}).get("model_id", model_id).replace("-", " ").title()
+          model_name = model_data.get("model_name", model_id).strip()
           
           # Get description (first 200 chars of overview/summary)
           description = (model_data.get("overview", "")[:200] or 
@@ -163,30 +163,13 @@ jobs:
           cp Model_Card.html "gallery/cards/${MODEL_ID}.html"
           echo "Archived card as gallery/cards/${MODEL_ID}.html"
 
-      - name: Update gallery registry
+      - name: Regenerate catalog registry and dashboard
         id: update-registry
         if: success() || steps.model-metadata.outcome == 'success'
-        continue-on-error: true
         run: |
-          python python/update_gallery_registry.py add \
-            --model-id "${{ steps.model-metadata.outputs.model_id }}" \
-            --model-name "${{ steps.model-metadata.outputs.model_name }}" \
-            --model-url "${{ steps.model-metadata.outputs.model_url }}" \
-            --pipeline-type "${{ steps.model-metadata.outputs.pipeline_type }}" \
-            --organization "${{ steps.model-metadata.outputs.organization }}" \
-            --description "${{ steps.model-metadata.outputs.description }}"
-          
-          if [ $? -eq 0 ]; then
-            echo "::notice::Registry updated successfully"
-          else
-            echo "::warning::Registry update had issues (may be duplicate)"
-          fi
-
-      - name: Regenerate gallery index
-        if: success() || steps.update-registry.outcome != 'failure'
-        run: |
-          python python/generate_gallery.py --registry gallery/cards.json --output gallery/index.html
-          echo "Generated gallery/index.html with updated cards"
+          python python/build_catalog.py
+          python python/build_catalog.py --check
+          echo "Generated dual-source catalog dashboard"
 
       - name: Prepare GitHub Pages site
         if: success() || steps.update-registry.outcome != 'failure'

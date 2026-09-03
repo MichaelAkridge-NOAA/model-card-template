@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse NMFS-OSI and SPARROW conservation AI models">
+  <title>Conservation AI Model Catalog</title>
+  <link rel="stylesheet" href="catalog.css">
+</head>
+<body>
+  <a class="skip-link" href="#catalog-grid">Skip to models</a>
+  <main class="shell">
+    <header class="catalog-header">
+      <div class="brand-lockup">
+        <img class="optics-logo" src="{OPTICS_LOGO}" alt="Optics SI">
+        <div>
+          <p class="eyebrow">NOAA Fisheries Open Science</p>
+          <h1>AI Model Catalog</h1>
+          <p id="inventory-copy" class="inventory-copy"></p>
+        </div>
+      </div>
+      <div class="source-picker">
+        <p class="source-picker-label">Catalog source</p>
+        <div class="source-switch" role="tablist" aria-label="Catalog source">
+          <button id="source-nmfs-osi" role="tab" data-source="nmfs-osi">NMFS-OSI</button>
+          <button id="source-sparrow" role="tab" data-source="sparrow">SPARROW</button>
+        </div>
+      </div>
+    </header>
+
+    <aside id="source-about" class="source-about" aria-labelledby="source-about-title" hidden>
+      <div class="source-about-mark" aria-hidden="true">S</div>
+      <div class="source-about-copy">
+        <p class="eyebrow">External model catalog</p>
+        <h2 id="source-about-title"></h2>
+        <p id="source-about-text"></p>
+      </div>
+      <a id="source-project-link" class="action primary" target="_blank" rel="noopener noreferrer">Visit SPARROW on GitHub</a>
+    </aside>
+
+    <section aria-label="Catalog totals" id="stat-grid" class="stat-grid"></section>
+
+    <section class="catalog-tools" aria-label="Find models">
+      <label class="search-wrap">
+        <span aria-hidden="true">⌕</span>
+        <span class="sr-only">Search models</span>
+        <input id="catalog-search" type="search" placeholder="Search models, datasets, developers, labels...">
+      </label>
+      <div id="quick-filters" class="chip-row" aria-label="Quick filters"></div>
+      <details id="more-filters" class="more-filters">
+        <summary>More filters</summary>
+        <div id="facet-groups" class="facet-groups"></div>
+      </details>
+      <div class="result-toolbar">
+        <p id="result-count" aria-live="polite"></p>
+        <div class="toolbar-actions">
+          <label>Sort
+            <select id="sort-models">
+              <option value="name">Name</option>
+              <option value="task">Task</option>
+              <option value="updated">Recently updated</option>
+            </select>
+          </label>
+          <button id="reset-filters" class="quiet-button" type="button">Reset filters</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="selected-model" class="selected-model" aria-live="polite" hidden></section>
+
+    <section id="catalog-grid" class="catalog-grid" aria-label="Models"></section>
+    <div id="empty-state" class="empty-state" hidden>
+      <h2>No matching models</h2>
+      <p>Change the search or clear one of the active filters.</p>
+    </div>
+
+    <footer>
+      <p id="source-note"></p>
+      <a id="source-link" target="_blank" rel="noopener noreferrer">View source catalog</a>
+    </footer>
+  </main>
+
+  <dialog id="license-dialog">
+    <form method="dialog">
+      <button class="dialog-close" aria-label="Close">×</button>
+      <p class="eyebrow">License details</p>
+      <h2 id="license-title"></h2>
+      <dl id="license-content"></dl>
+    </form>
+  </dialog>
+
+  <script id="catalog-data" type="application/json">{CATALOG_DATA}</script>
+  <script src="catalog.js"></script>
+</body>
+</html>

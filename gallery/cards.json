@@ -1,37 +1,83 @@
 {
-  "_schema_version": "1.0",
-  "_schema_description": "Registry of all generated model cards. Each card entry contains metadata for indexing and gallery display.",
-  "_schema_fields": {
-    "model_id": "Unique identifier derived from HuggingFace URL (e.g., 'yolo11m_esa_coral_detector')",
-    "model_name": "Human-readable model name (e.g., 'YOLO11m ESA Coral Detector')",
-    "model_url": "HuggingFace model repository URL",
-    "card_url": "Relative path to the generated card HTML file (cards/{model_id}.html), relative to gallery/",
-    "pipeline_type": "ML task type: 'object-detection', 'image-classification', 'segmentation', 'other'",
-    "date_added": "ISO 8601 UTC timestamp when card was added to registry",
-    "thumbnail_url": "Optional URL or relative path to model thumbnail image",
-    "description": "Brief 1-2 sentence overview of the model from README",
-    "organization": "HuggingFace organization name for grouping and search"
-  },
+  "_schema_version": "2.0",
+  "_schema_description": "Generated NMFS-OSI compatibility registry. Edit catalogs/nmfs-osi.toml instead.",
   "cards": [
     {
+      "model_id": "NMFS-OSI/noaa-esd-coral-bleaching-vit-classifier-v1",
+      "model_name": "NOAA ESD Coral Bleaching ViT Classifier",
+      "model_url": "https://huggingface.co/NMFS-OSI/noaa-esd-coral-bleaching-vit-classifier-v1",
+      "card_url": "cards/NMFS-OSI/noaa-esd-coral-bleaching-vit-classifier-v1.html",
+      "pipeline_type": "image-classification",
+      "date_added": "2025-02-26T17:26:08Z",
+      "description": "Vision Transformer classifier for distinguishing bleached and healthy coral in NOAA ecosystem imagery.",
+      "organization": "NMFS-OSI",
+      "thumbnail_url": "https://huggingface.co/NMFS-OSI/noaa-esd-coral-bleaching-vit-classifier-v1/resolve/main/00_example.png"
+    },
+    {
+      "model_id": "NMFS-OSI/yolo11n-cls-noaa-esd-coral-bleaching",
+      "model_name": "YOLO11n NOAA Coral Bleaching Classifier",
+      "model_url": "https://huggingface.co/NMFS-OSI/yolo11n-cls-noaa-esd-coral-bleaching",
+      "card_url": "cards/NMFS-OSI/yolo11n-cls-noaa-esd-coral-bleaching.html",
+      "pipeline_type": "image-classification",
+      "date_added": "2026-07-08T01:58:03Z",
+      "description": "Compact YOLO11 classifier for bleached-versus-healthy coral imagery, with ONNX, TorchScript, and NCNN exports.",
+      "organization": "NMFS-OSI",
+      "thumbnail_url": "https://huggingface.co/NMFS-OSI/yolo11n-cls-noaa-esd-coral-bleaching/resolve/main/01_predictions_vs_ground_truth.png"
+    },
+    {
       "model_id": "NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1",
-      "model_name": "Nmfs Osi/Yolo11M Cls Noaa Pacific Benthic Cover T1",
+      "model_name": "YOLO11m Pacific Benthic Cover T1",
       "model_url": "https://huggingface.co/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1",
       "card_url": "cards/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1.html",
       "pipeline_type": "image-classification",
       "date_added": "2026-05-07T19:46:12.789366Z",
-      "description": "A YOLO11m image classification model trained to classify **broad benthic cover categories (Tier-1)** in underwater reef imagery from NOAA Pacific Islands surveys. The model achieves **71.0% top-1 accu",
-      "organization": "NMFS-OSI"
+      "description": "Broad Tier-1 benthic-cover classifier for underwater reef imagery from NOAA Pacific Islands surveys.",
+      "organization": "NMFS-OSI",
+      "thumbnail_url": "https://huggingface.co/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1/resolve/main/t1_radar.png"
+    },
+    {
+      "model_id": "NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t3",
+      "model_name": "YOLO11m Pacific Benthic Cover T3",
+      "model_url": "https://huggingface.co/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t3",
+      "card_url": "cards/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t3.html",
+      "pipeline_type": "image-classification",
+      "date_added": "2026-04-21T18:34:14Z",
+      "description": "Fine-grained Tier-3 classifier for 67 benthic-cover classes in NOAA Pacific reef survey imagery.",
+      "organization": "NMFS-OSI",
+      "thumbnail_url": "https://huggingface.co/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t3/resolve/main/t3_radar.png"
     },
     {
       "model_id": "NMFS-OSI/yolo11m-esa-coral-icra-detector",
-      "model_name": "Nmfs Osi/Yolo11M Esa Coral Icra Detector",
+      "model_name": "YOLO11m ESA Coral ICRA Detector",
       "model_url": "https://huggingface.co/NMFS-OSI/yolo11m-esa-coral-icra-detector",
       "card_url": "cards/NMFS-OSI/yolo11m-esa-coral-icra-detector.html",
       "pipeline_type": "object-detection",
       "date_added": "2026-05-07T19:12:41.573629Z",
-      "description": "This model was trained to identify and locate **Isopora crateriformis (ICRA)** using the ultralytics YOLO11 architecture in various underwater conditions. - **Model Architecture**: YOLO11m - **Task**:",
-      "organization": "NMFS-OSI"
+      "description": "YOLO11 detector for locating the ESA-listed coral Isopora crateriformis in varied underwater conditions.",
+      "organization": "NMFS-OSI",
+      "thumbnail_url": "https://huggingface.co/NMFS-OSI/yolo11m-esa-coral-icra-detector/resolve/main/example.jpg"
+    },
+    {
+      "model_id": "NMFS-OSI/yolo11x-sea-urchin-detector",
+      "model_name": "YOLO11x Sea Urchin Detector",
+      "model_url": "https://huggingface.co/NMFS-OSI/yolo11x-sea-urchin-detector",
+      "card_url": "cards/NMFS-OSI/yolo11x-sea-urchin-detector.html",
+      "pipeline_type": "object-detection",
+      "date_added": "2026-05-20T01:35:51Z",
+      "description": "Large YOLO11 detector trained to locate sea urchins in underwater survey imagery from multiple datasets.",
+      "organization": "NMFS-OSI",
+      "thumbnail_url": "https://huggingface.co/NMFS-OSI/yolo11x-sea-urchin-detector/resolve/main/results_h.png"
+    },
+    {
+      "model_id": "NMFS-OSI/yolo11-segment-fish-grayscale",
+      "model_name": "YOLO11 Fish Grayscale Segmenter",
+      "model_url": "https://huggingface.co/NMFS-OSI/yolo11-segment-fish-grayscale",
+      "card_url": "cards/NMFS-OSI/yolo11-segment-fish-grayscale.html",
+      "pipeline_type": "image-segmentation",
+      "date_added": "2026-05-20T01:35:58Z",
+      "description": "Instance-segmentation model for fish in grayscale underwater imagery using SAM-assisted training masks.",
+      "organization": "NMFS-OSI",
+      "thumbnail_url": "https://huggingface.co/NMFS-OSI/yolo11-segment-fish-grayscale/resolve/main/yolo11n-seg.gif"
     }
   ]
 }

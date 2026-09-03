@@ -4,3 +4,5 @@ pyyaml>=6.0
 reportlab>=4.0.0
 markdown>=3.4.0
 pillow>=9.0.0  # Required for image handling in reportlab
+tomli>=2.0.1; python_version < "3.11"
+tomli-w>=1.0.0

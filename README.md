@@ -1,6 +1,6 @@
 # Model Card Builder
 
-Model Card Builder is an AI automation pipeline that converts a Hugging Face model URL into a typed model-data card, generates a branded HTML model card, updates a searchable gallery, and publishes the result to GitHub Pages.
+Model Card Builder converts Hugging Face model metadata into typed model cards and publishes a dual-source conservation AI catalog. The dashboard indexes all NMFS-OSI models and a pinned snapshot of the Microsoft SPARROW model zoo.
 
 ![Pipeline](./assets/pipeline.png)
 
@@ -10,7 +10,9 @@ Model Card Builder is an AI automation pipeline that converts a Hugging Face mod
 - Normalizes data into a typed Model Card Data contract
 - Optionally enriches missing narrative sections with GitHub Models using prompt files
 - Generates Model_Card.html with named template and theme architecture
-- Archives cards, updates gallery/cards.json, and rebuilds the gallery index
+- Indexes all seven NMFS-OSI models and the pinned SPARROW TOML catalog
+- Generates source-aware totals, filters, cards, and an NMFS-OSI/SPARROW toggle
+- Archives NMFS-OSI detail cards and generates gallery registry data
 - Publishes static site output through GitHub Pages automation
 
 ## Example 
@@ -47,8 +49,8 @@ flowchart LR
     D --> F[Recovery prompt\nprompts/recover_model_card_facets.prompt.yaml]
     D --> G[Build HTML\npython/build.py]
     G --> H[Archive card\ngallery/cards/<model_id>.html]
-    H --> I[Update registry\npython/update_gallery_registry.py]
-    I --> J[Generate gallery index\npython/generate_gallery.py]
+    H --> I[Build dual catalog\npython/build_catalog.py]
+    I --> J[Generate registry, payload, and dashboard]
     J --> K[Publish to GitHub Pages]
 ```
 
@@ -60,8 +62,9 @@ Workflow file: .github/workflows/model-card-builder.yml
 - Runs optional AI summarization and targeted recovery using prompt contracts
 - Builds HTML output
 - Archives card to gallery/cards/
-- Updates gallery/cards.json registry with model metadata
-- Regenerates gallery/index.html
+- Generates gallery/cards.json from catalogs/nmfs-osi.toml
+- Normalizes the pinned catalogs/sparrow.catalog.toml snapshot
+- Regenerates gallery/catalog-data.json and gallery/index.html
 - Prepares site/ and deploys to GitHub Pages
 
 Live gallery:
@@ -72,6 +75,8 @@ Live gallery:
 
 - Template: named arrangement of sections and blocks in the Card Document
 - Theme: named visual treatment applied by the renderer
+- Catalog source: `catalogs/nmfs-osi.toml` is curated locally; SPARROW remains upstream-owned and is stored as a hash-verified snapshot
+- Generated files: `gallery/cards.json`, `gallery/catalog-data.json`, and `gallery/index.html` must be rebuilt with `python python/build_catalog.py`
 
 Model Card Builder uses these internal extension points while presenting a single automated pipeline at the product level.
 
